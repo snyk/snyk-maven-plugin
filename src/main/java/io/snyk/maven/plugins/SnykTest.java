@@ -20,9 +20,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,7 +29,9 @@ import java.util.Map;
 /**
  * Created by dror on 15/01/2017.
  *
- * Runs 'snyk test' on the enclosing project
+ * Tests the current project's dependencies for vulnerabilities,
+ * and lists all those vulnerabilities in the build log.
+ * Can fail the build on a condition of minimum vulnerability severity.
  */
 @Mojo( name = "test")
 public class SnykTest extends AbstractMojo {
@@ -72,11 +72,13 @@ public class SnykTest extends AbstractMojo {
         severityMap.put("high",     SEVERITY_HIGH);
     }
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    /**
+     * executes this Mojo
+     * @throws MojoFailureException if the build had to be stopped (a normal behavior)
+     */
+    public void execute() throws MojoFailureException {
         try {
             executeInternal();
-        } catch(MojoExecutionException e) {
-            throw e;
         } catch(MojoFailureException e) {
             throw e;
         } catch(Throwable t) {
@@ -84,6 +86,13 @@ public class SnykTest extends AbstractMojo {
         }
     }
 
+    /**
+     * main engine for this Mojo
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     * @throws IOException
+     * @throws ParseException
+     */
     private void executeInternal()
             throws MojoExecutionException, MojoFailureException, IOException, ParseException {
         if(!validateParameters()) {
@@ -92,10 +101,17 @@ public class SnykTest extends AbstractMojo {
 
         JSONObject projectTree = new ProjectTraversal(
                 project, repoSystem, repoSession).getTree();
-        HttpResponse response = sendDataToSnyk(projectTree);
+        String snykPolicy = readSnykFile();
+
+        HttpResponse response = sendDataToSnyk(projectTree, snykPolicy);
         parseResponse(response);
     }
 
+    /**
+     * validate the plugin's parameters
+     * @return false if validation didn't pass
+     * @throws MojoExecutionException
+     */
     private boolean validateParameters() throws MojoExecutionException {
         boolean validated = true;
         if(apiToken.equals("")) {
@@ -107,7 +123,71 @@ public class SnykTest extends AbstractMojo {
         return validated;
     }
 
-    private HttpResponse sendDataToSnyk(JSONObject projectTree)
+    /**
+     * search for a Snyk policy file for this project, and return its contents
+     * @return the contents of the .snyk file, or null if the file was not found
+     */
+    private String readSnykFile() {
+        String snykFilename = getSnykFilePath(project);
+        if(snykFilename == null) {
+            return null;
+        }
+
+        BufferedReader br = null;
+        FileReader fr = null;
+        try {
+            fr = new FileReader(snykFilename);
+            br = new BufferedReader(fr);
+            String sCurrentLine;
+            br = new BufferedReader(new FileReader(snykFilename));
+            String contents = "";
+            while ((sCurrentLine = br.readLine()) != null) {
+                contents += sCurrentLine;
+            }
+            return contents;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (br != null)
+                    br.close();
+                if (fr != null)
+                    fr.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * recursively get the first Snyk policy file encountered,
+     * starting from this project and the parent chain
+     * @param project the current Maven project
+     * @return the path of the located file, or null if none was found
+     */
+    private String getSnykFilePath(MavenProject project) {
+        if(project == null) {
+            return null;
+        }
+        String filename = project.getBasedir().toString() + File.separator + Constants.SNYK_FILENAME;
+        File f = new File(filename);
+        if(f.exists() && !f.isDirectory()) {
+            return filename;
+        }
+        return getSnykFilePath(project.getParent());
+    }
+
+    /**
+     * send the data to api/vuln/maven in the Snyk backend,
+     * which returns
+     * @param projectTree the dependencies tree as collected by ProjectTraversal
+     * @param snykPolicy the Snyk policy, or null if none exists
+     * @return the HTTP response object
+     * @throws IOException
+     * @throws ParseException
+     */
+    private HttpResponse sendDataToSnyk(JSONObject projectTree, String snykPolicy)
             throws IOException, ParseException {
         HttpPost request = new HttpPost(baseUrl + "/api/vuln/maven");
         request.addHeader("authorization", "token " + apiToken);
@@ -120,6 +200,13 @@ public class SnykTest extends AbstractMojo {
         return client.execute(request);
     }
 
+    /**
+     * parse Snyk's response and present it in the build log
+     * @param response the HTTP response from the call to Snyk
+     * @throws IOException
+     * @throws ParseException
+     * @throws MojoFailureException
+     */
     private void parseResponse(HttpResponse response)
             throws IOException, ParseException, MojoFailureException {
         if(response.getStatusLine().getStatusCode() >= 400) {
@@ -140,6 +227,11 @@ public class SnykTest extends AbstractMojo {
         }
     }
 
+    /**
+     * process the error from an HTTP response object,
+     * and log it in the build log
+     * @param response an HTTP response object
+     */
     private void processError(HttpResponse response) {
         // process an error in the response object
         if(response.getStatusLine().toString().contains("401")) {
@@ -149,6 +241,11 @@ public class SnykTest extends AbstractMojo {
         }
     }
 
+    /**
+     * parse the response body into a JSON object
+     * @param response an HTTP response object
+     * @return a JSON object containing the response
+     */
     private JSONObject parseResponseBody(HttpResponse response) {
         JSONParser parser = new JSONParser();
         try {
@@ -163,6 +260,12 @@ public class SnykTest extends AbstractMojo {
         return null;
     }
 
+    /**
+     * process and print vulns from a response body to the build log;
+     * optionally stop the build if a certain vuln severity level was reached
+     * @param responseJson a JSON object containing the parsed response object
+     * @throws MojoFailureException if the build should be stopped due to a minimum severity level
+     */
     private void processVulns(JSONObject responseJson) throws MojoFailureException {
         HashSet<String> vulnIdSet = new HashSet<String>();
 
@@ -196,6 +299,10 @@ public class SnykTest extends AbstractMojo {
         }
     }
 
+    /**
+     * print a single vuln to the build log
+     * @param vuln a JSON object containing a single vuln
+     */
     private void printVuln(JSONObject vuln) {
         getLog().warn("✗ " + vuln.get("severity") + " severity vulnerability found on " +
                 vuln.get("moduleName") + "@" +

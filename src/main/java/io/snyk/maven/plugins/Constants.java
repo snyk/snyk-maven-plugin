@@ -5,10 +5,22 @@ import java.net.URL;
 import org.apache.maven.plugin.logging.Log;
 
 /**
+ * holds constants, error display functionality and helper functions
  * Created by dror on 05/05/2017.
  */
 public class Constants {
 
+    public static final String SNYK_FILENAME = ".snyk";
+
+    public static final String DEFAULT_ENDPOINT = "https://snyk.io/api";
+
+    public static final String ERROR_GENERAL = "There was a problem with the Snyk plugin.";
+
+    /**
+     * parses the protocol://host:port from the defined endpoint
+     * @param endpoint the defined endpoint
+     * @return the protocol://host:port part of the endpoint URL
+     */
     public static String parseEndpoint(String endpoint) {
         if (endpoint == null) {
             return "";
@@ -21,10 +33,10 @@ public class Constants {
         }
     }
 
-    public static final String DEFAULT_ENDPOINT = "https://snyk.io/api";
-
-    public static final String ERROR_GENERAL = "There was a problem with the Snyk plugin.";
-
+    /**
+     * display a generic authentication error message to the build log
+     * @param log the build log
+     */
     public static void displayAuthError(Log log) {
         log.error("Unauthorized Snyk plugin.");
         log.error("Please ensure you have provided your Snyk's API token " +

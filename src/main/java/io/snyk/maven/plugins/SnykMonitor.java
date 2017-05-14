@@ -29,7 +29,8 @@ import java.net.UnknownHostException;
 /**
  * Created by dror on 15/01/2017.
  *
- * Runs 'snyk monitor' on the enclosing project
+ * Records the current state of dependencies of the project in the Snyk system.
+ * This record will be continuously scanned to alert the user for new or updated vulnerabilities.
  */
 @Mojo( name = "monitor")
 public class SnykMonitor extends AbstractMojo {
@@ -60,18 +61,25 @@ public class SnykMonitor extends AbstractMojo {
 
     private String baseUrl = "";
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    /**
+     * executes this Mojo
+     * cannot fail the build under any circumstance
+     */
+    public void execute() {
         try {
             executeInternal();
-        } catch(MojoExecutionException e) {
-            throw e;
-        } catch(MojoFailureException e) {
-            throw e;
         } catch(Throwable t) {
             getLog().error(Constants.ERROR_GENERAL);
         }
     }
 
+    /**
+     * main engine for this Mojo
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     * @throws IOException
+     * @throws ParseException
+     */
     private void executeInternal()
             throws MojoExecutionException, MojoFailureException, IOException, ParseException {
         if(!validateParameters()) {
@@ -84,6 +92,11 @@ public class SnykMonitor extends AbstractMojo {
         parseResponse(response);
     }
 
+    /**
+     * validate the plugin's parameters
+     * @return false if validation didn't pass
+     * @throws MojoExecutionException
+     */
     private boolean validateParameters() throws MojoExecutionException {
         boolean validated = true;
         if(apiToken.equals("")) {
@@ -95,6 +108,14 @@ public class SnykMonitor extends AbstractMojo {
         return validated;
     }
 
+    /**
+     * send the data to api/vuln/maven in the Snyk backend,
+     * which returns
+     * @param projectTree the dependencies tree as collected by ProjectTraversal
+     * @return the HTTP response object
+     * @throws IOException
+     * @throws ParseException
+     */
     private HttpResponse sendDataToSnyk(JSONObject projectTree)
             throws IOException, ParseException {
         HttpPut request = new HttpPut(baseUrl + "/api/monitor/maven");
@@ -110,6 +131,11 @@ public class SnykMonitor extends AbstractMojo {
         return client.execute(request);
     }
 
+    /**
+     * prepares a request body to send the Snyk API
+     * @param projectTree the dependencies tree as collected by ProjectTraversal
+     * @return a JSON object which should be sent as the body of the POST request to the Snyk API
+     */
     private JSONObject prepareRequestBody(JSONObject projectTree) {
         JSONObject body = new JSONObject();
 
@@ -136,11 +162,13 @@ public class SnykMonitor extends AbstractMojo {
         return body;
     }
 
-    private String getMonitorWebURL(String org, String id) {
-        String url = baseUrl + "/org/" + org + "/monitor/" + id;
-        return url;
-    }
-
+    /**
+     * parse Snyk's response and present it in the build log
+     * @param response the HTTP response from the call to Snyk
+     * @throws IOException
+     * @throws ParseException
+     * @throws MojoFailureException
+     */
     private void parseResponse(HttpResponse response)
             throws IOException, ParseException, MojoFailureException {
         if(response.getStatusLine().getStatusCode() >= 400) {
@@ -172,6 +200,22 @@ public class SnykMonitor extends AbstractMojo {
         }
     }
 
+    /**
+     * creates the URL for the recorded project in the Snyk website
+     * @param org the organization name
+     * @param id the ID of the project
+     * @return the full URL of the recorded project
+     */
+    private String getMonitorWebURL(String org, String id) {
+        String url = baseUrl + "/org/" + org + "/monitor/" + id;
+        return url;
+    }
+
+    /**
+     * process the error from an HTTP response object,
+     * and log it in the build log
+     * @param response an HTTP response object
+     */
     private void processError(HttpResponse response) {
         // process an error in the response object
         if(response.getStatusLine().toString().contains("401")) {
