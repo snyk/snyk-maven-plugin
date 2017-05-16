@@ -1,0 +1,32 @@
+/*
+ * verifying that the single-module integration test runs as expected
+ */
+
+import java.io.*;
+import org.codehaus.plexus.util.*;
+
+boolean result = true;
+
+try {
+    String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
+
+    if(!log.contains("[WARNING] - from: io.snyk.example:multi-module-parent@1.0-SNAPSHOT > jaxen:jaxen@1.1.1 > xom:xom@1.0 > xalan:xalan@2.6.0")) {
+        System.err.println("Missing dependency: axis:axis@1.4");
+        result = false;
+    }
+
+    if(!log.contains("[WARNING] - from: io.snyk.example:child-module-1@1.0-SNAPSHOT > axis:axis@1.4")) {
+        System.err.println("Missing dependency: axis:axis@1.4");
+        result = false;
+    }
+
+    if(!log.contains("[WARNING] - from: io.snyk.example:child-module-1@1.0-SNAPSHOT > jaxen:jaxen@1.1.1 > xom:xom@1.0 > xalan:xalan@2.6.0")) {
+        System.err.println("Missing dependency: axis:axis@1.4");
+        result = false;
+    }
+} catch(Exception e) {
+    e.printStackTrace();
+    result = false;
+}
+
+return result;

@@ -1,6 +1,6 @@
 language: java
 jdk: oraclejdk8
-script: "mvn clean install"
+script: "mvn clean install -Prun-its"
 branches:
   only:
   - master
