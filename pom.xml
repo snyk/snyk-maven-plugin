@@ -138,7 +138,7 @@
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <settingsFile>src/it/settings.xml</settingsFile>
               <goals>
-                <goal>test</goal>
+                <goal>install</goal>
                 <!--<goal>clean</goal>-->
                 <!--<goal>test-compile</goal>-->
               </goals>
@@ -161,7 +161,7 @@
     <profile>
       <id>build-extras</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <!--<activeByDefault>true</activeByDefault>-->
       </activation>
       <build>
         <plugins>
