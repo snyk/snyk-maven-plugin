@@ -101,9 +101,8 @@ public class SnykTest extends AbstractMojo {
 
         JSONObject projectTree = new ProjectTraversal(
                 project, repoSystem, repoSession).getTree();
-        String snykPolicy = readSnykFile();
 
-        HttpResponse response = sendDataToSnyk(projectTree, snykPolicy);
+        HttpResponse response = sendDataToSnyk(projectTree);
         parseResponse(response);
     }
 
@@ -124,75 +123,23 @@ public class SnykTest extends AbstractMojo {
     }
 
     /**
-     * search for a Snyk policy file for this project, and return its contents
-     * @return the contents of the .snyk file, or null if the file was not found
-     */
-    private String readSnykFile() {
-        String snykFilename = getSnykFilePath(project);
-        if(snykFilename == null) {
-            return null;
-        }
-
-        BufferedReader br = null;
-        FileReader fr = null;
-        try {
-            fr = new FileReader(snykFilename);
-            br = new BufferedReader(fr);
-            String sCurrentLine;
-            br = new BufferedReader(new FileReader(snykFilename));
-            String contents = "";
-            while ((sCurrentLine = br.readLine()) != null) {
-                contents += sCurrentLine;
-            }
-            return contents;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (br != null)
-                    br.close();
-                if (fr != null)
-                    fr.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * recursively get the first Snyk policy file encountered,
-     * starting from this project and the parent chain
-     * @param project the current Maven project
-     * @return the path of the located file, or null if none was found
-     */
-    private String getSnykFilePath(MavenProject project) {
-        if(project == null) {
-            return null;
-        }
-        String filename = project.getBasedir().toString() + File.separator + Constants.SNYK_FILENAME;
-        File f = new File(filename);
-        if(f.exists() && !f.isDirectory()) {
-            return filename;
-        }
-        return getSnykFilePath(project.getParent());
-    }
-
-    /**
      * send the data to api/vuln/maven in the Snyk backend,
      * which returns
      * @param projectTree the dependencies tree as collected by ProjectTraversal
-     * @param snykPolicy the Snyk policy, or null if none exists
      * @return the HTTP response object
      * @throws IOException
      * @throws ParseException
      */
-    private HttpResponse sendDataToSnyk(JSONObject projectTree, String snykPolicy)
+    private HttpResponse sendDataToSnyk(JSONObject projectTree)
             throws IOException, ParseException {
         HttpPost request = new HttpPost(baseUrl + "/api/vuln/maven");
         request.addHeader("authorization", "token " + apiToken);
         request.addHeader("x-is-ci", "false"); // how do we know this ??
         request.addHeader("content-type", "application/json");
+        String snykPolicy = SnykPolicy.readPolicyFile(project);
+        if(snykPolicy != null) {
+            projectTree.put("policy", snykPolicy);
+        }
         HttpEntity entity = new StringEntity(projectTree.toString());
         request.setEntity(entity);
 

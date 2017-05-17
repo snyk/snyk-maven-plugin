@@ -158,6 +158,10 @@ public class SnykMonitor extends AbstractMojo {
         meta.put("org", org);
         body.put("meta", meta);
         body.put("package", projectTree);
+        String snykPolicy = SnykPolicy.readPolicyFile(project);
+        if(snykPolicy != null) {
+            body.put("policy", snykPolicy);
+        }
 
         return body;
     }

@@ -39,9 +39,17 @@
                 <version>1.0-SNAPSHOT</version>
                 <executions>
                     <execution>
+                        <id>snyk-test</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>snyk-monitor</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>monitor</goal>
                         </goals>
                     </execution>
                 </executions>
