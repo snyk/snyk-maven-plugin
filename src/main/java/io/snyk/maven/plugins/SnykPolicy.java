@@ -16,6 +16,7 @@ public class SnykPolicy {
 
     /**
      * search for a Snyk policy file for this project, and return its contents
+     * @param project the Maven project object
      * @return the contents of the .snyk file, or null if the file was not found
      */
     public static String readPolicyFile(MavenProject project) {
