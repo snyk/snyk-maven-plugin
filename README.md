@@ -19,7 +19,7 @@ The Snyk Maven plugin tests and monitors your Maven dependencies.
         <plugin>
             <groupId>io.snyk</groupId>
             <artifactId>snyk-maven-plugin</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
             <executions>
                 <execution>
                     <id>snyk-test</id>
@@ -47,6 +47,10 @@ The Snyk Maven plugin tests and monitors your Maven dependencies.
 ```
 
 3. As seen in the snippet above, Snyk recommends to set the **test** goal in the **test** phase of Maven; and the **monitor** goal in the **install** phase of Maven.
+
+## Supported Maven versions
+
+This plugin is supported by Maven version 3.1.0 and above.
 
 ## Configuration
 
