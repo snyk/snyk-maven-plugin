@@ -1,0 +1,29 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.7.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  'snyk:lic:maven:org.eclipse.aether:aether-api:EPL-1.0':
+    - '*':
+        reason: open source project is ok to use EPL
+        expires: 2018-09-28T06:00:48.761Z
+  'snyk:lic:maven:org.eclipse.aether:aether-impl:EPL-1.0':
+    - '*':
+        reason: open source project is ok to use EPL
+        expires: 2018-09-28T06:00:58.748Z
+  'snyk:lic:maven:org.eclipse.aether:aether-spi:EPL-1.0':
+    - '*':
+        reason: open source project is ok to use EPL
+        expires: 2018-09-28T06:01:08.989Z
+  'snyk:lic:maven:org.eclipse.aether:aether-util:EPL-1.0':
+    - '*':
+        reason: open source project is ok to use EPL
+        expires: 2018-09-28T06:01:15.758Z
+  'snyk:lic:maven:org.eclipse.sisu:org.eclipse.sisu.inject:EPL-1.0':
+    - '*':
+        reason: open source project is ok to use EPL
+        expires: 2018-09-28T06:01:22.592Z
+  'snyk:lic:maven:org.eclipse.sisu:org.eclipse.sisu.plexus:EPL-1.0':
+    - '*':
+        reason: open source project is ok to use EPL
+        expires: 2018-09-28T06:01:30.953Z
+patch: {}
