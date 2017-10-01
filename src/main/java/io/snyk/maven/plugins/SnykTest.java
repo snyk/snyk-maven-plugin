@@ -82,7 +82,12 @@ public class SnykTest extends AbstractMojo {
         } catch(MojoFailureException e) {
             throw e;
         } catch(Throwable t) {
-            getLog().warn(Constants.ERROR_GENERAL);
+            if (getLog().isDebugEnabled()) {
+                getLog().error(Constants.ERROR_GENERAL, t);
+            } else {
+                getLog().error(Constants.ERROR_GENERAL);
+                getLog().error(Constants.ERROR_RERUN_WITH_DEBUG);
+            }
         }
     }
 
@@ -184,7 +189,8 @@ public class SnykTest extends AbstractMojo {
         if(response.getStatusLine().toString().contains("401")) {
             Constants.displayAuthError(getLog());
         } else {
-            getLog().error(Constants.ERROR_GENERAL);
+            getLog().error("Bad response from Snyk: " +
+                response.getStatusLine().toString());
         }
     }
 
