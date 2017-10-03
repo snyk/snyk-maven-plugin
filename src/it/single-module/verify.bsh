@@ -5,18 +5,10 @@
 import java.io.*;
 import org.codehaus.plexus.util.*;
 
-boolean result = true;
+String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
 
-try {
-    String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
-
-    if(!log.contains("[WARNING] - from: io.snyk.example:single-module@1.0-SNAPSHOT > axis:axis@1.4")) {
-        System.err.println("Missing dependency: axis:axis@1.4");
-        result = false;
-    }
-} catch(Exception e) {
-    e.printStackTrace();
-    result = false;
+if(!log.contains("[WARNING] - from: io.snyk.example:single-module@1.0-SNAPSHOT > axis:axis@1.4")) {
+    throw new Exception("Missing dependency: axis:axis@1.4");
 }
 
-return result;
+return true;

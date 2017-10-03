@@ -59,7 +59,7 @@ public class SnykPolicy {
      * @return the path of the located file, or null if none was found
      */
     public static String getPolicyFilePath(MavenProject project) {
-        if(project == null) {
+        if(project == null || project.getBasedir() == null) {
             return null;
         }
         String filename = project.getBasedir().toString() + File.separator + Constants.SNYK_FILENAME;

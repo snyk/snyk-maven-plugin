@@ -16,6 +16,9 @@ public class Constants {
 
     public static final String ERROR_GENERAL = "There was a problem with the Snyk plugin.";
 
+    public static final String ERROR_RERUN_WITH_DEBUG =
+        "Re-run Maven using the -X switch to enable full debug logging.";
+
     /**
      * parses the protocol://host:port from the defined endpoint
      * @param endpoint the defined endpoint
