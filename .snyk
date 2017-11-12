@@ -26,4 +26,12 @@ ignore:
     - '*':
         reason: open source project is ok to use EPL
         expires: 2018-09-28T06:01:30.953Z
+  'SNYK-JAVA-ORGCODEHAUSPLEXUS-31521':
+    - '*':
+        reason: None given.
+        expires: 2018-12-12T06:01:30.953Z
+  'SNYK-JAVA-ORGCODEHAUSPLEXUS-31522':
+    - '*':
+        reason: None given.
+        expires: 2018-12-12T06:01:30.953Z
 patch: {}
