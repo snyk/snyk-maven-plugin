@@ -15,7 +15,6 @@ The Snyk Maven plugin tests and monitors your Maven dependencies.
 ```
 <build>
     <plugins>
-        ...
         <plugin>
             <groupId>io.snyk</groupId>
             <artifactId>snyk-maven-plugin</artifactId>
@@ -42,7 +41,7 @@ The Snyk Maven plugin tests and monitors your Maven dependencies.
                 <org></org>
             </configuration>
         </plugin>
-    <plugins>
+    </plugins>
 <build>
 ```
 
