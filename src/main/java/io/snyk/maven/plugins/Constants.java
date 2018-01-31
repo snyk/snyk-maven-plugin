@@ -3,6 +3,7 @@ package io.snyk.maven.plugins;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * holds constants, error display functionality and helper functions
@@ -39,13 +40,15 @@ public class Constants {
     /**
      * display a generic authentication error message to the build log
      * @param log the build log
+     * @throws MojoFailureException if the build had to be stopped (a normal behavior)
      */
-    public static void displayAuthError(Log log) {
+    public static void displayAuthError(Log log) throws MojoFailureException {
         log.error("Unauthorized Snyk plugin.");
         log.error("Please ensure you have provided your Snyk's API token " +
                 "in the <apiToken></apiToken> plugin configuration option.");
         log.error("See https://snyk.io/docs/using-snyk#authentication " +
                 "for more information.");
+        throw new MojoFailureException("Unauthorized Snyk plugin");
     }
 
 }

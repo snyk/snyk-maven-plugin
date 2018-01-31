@@ -102,7 +102,7 @@ public class SnykMonitor extends AbstractMojo {
      * @return false if validation didn't pass
      * @throws MojoExecutionException
      */
-    private boolean validateParameters() throws MojoExecutionException {
+    private boolean validateParameters() throws MojoExecutionException, MojoFailureException {
         boolean validated = true;
         if(apiToken.equals("")) {
             Constants.displayAuthError(getLog());
@@ -225,7 +225,7 @@ public class SnykMonitor extends AbstractMojo {
      * and log it in the build log
      * @param response an HTTP response object
      */
-    private void processError(HttpResponse response) {
+    private void processError(HttpResponse response) throws MojoFailureException {
         // process an error in the response object
         if(response.getStatusLine().toString().contains("401")) {
             Constants.displayAuthError(getLog());
