@@ -32,7 +32,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <mavenVersion>3.1.0</mavenVersion>
+    <mavenVersion>3.5.0</mavenVersion>
     <aetherVersion>1.1.0</aetherVersion>
   </properties>
 
@@ -51,7 +51,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.8</version>
+      <version>3.0.24</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
