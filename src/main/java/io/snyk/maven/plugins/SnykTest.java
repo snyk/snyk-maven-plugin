@@ -98,8 +98,7 @@ public class SnykTest extends AbstractMojo {
      * @throws IOException
      * @throws ParseException
      */
-    private void executeInternal()
-            throws MojoExecutionException, MojoFailureException, IOException, ParseException {
+    private void executeInternal() throws MojoExecutionException, MojoFailureException, IOException {
         if(!validateParameters()) {
             return;
         }
@@ -116,9 +115,9 @@ public class SnykTest extends AbstractMojo {
      * @return false if validation didn't pass
      * @throws MojoExecutionException
      */
-    private boolean validateParameters() throws MojoExecutionException {
+    private boolean validateParameters() {
         boolean validated = true;
-        if(apiToken.equals("")) {
+        if(apiToken.isEmpty()) {
             Constants.displayAuthError(getLog());
             validated = false;
         }
@@ -135,11 +134,10 @@ public class SnykTest extends AbstractMojo {
      * @throws IOException
      * @throws ParseException
      */
-    private HttpResponse sendDataToSnyk(JSONObject projectTree)
-            throws IOException, ParseException {
-        HttpPost request = new HttpPost(baseUrl + "/api/vuln/maven");
+    private HttpResponse sendDataToSnyk(JSONObject projectTree) throws IOException {
+        HttpPost request = new HttpPost(baseUrl + "/api/vuln/maven/?applyPolicy=true");
         request.addHeader("authorization", "token " + apiToken);
-        request.addHeader("x-is-ci", "false"); // how do we know this ??
+        request.addHeader("x-is-ci", "false"); // TODO: how do we know this ??
         request.addHeader("content-type", "application/json");
         String snykPolicy = SnykPolicy.readPolicyFile(project);
         if(snykPolicy != null) {
@@ -159,8 +157,7 @@ public class SnykTest extends AbstractMojo {
      * @throws ParseException
      * @throws MojoFailureException
      */
-    private void parseResponse(HttpResponse response)
-            throws IOException, ParseException, MojoFailureException {
+    private void parseResponse(HttpResponse response) throws MojoFailureException {
         if(response.getStatusLine().getStatusCode() >= 400) {
             processError(response);
             return;
@@ -207,10 +204,9 @@ public class SnykTest extends AbstractMojo {
                     new InputStreamReader(
                         response.getEntity().getContent())));
             return jsonObject;
-        } catch (IOException e) {
-        } catch (ParseException e) {
+        } catch (IOException|ParseException e) {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -224,11 +220,12 @@ public class SnykTest extends AbstractMojo {
 
         JSONArray vulns = (JSONArray)responseJson.get("vulnerabilities");
         int highestSeverity = SEVERITY_LOW;
+
         Iterator<JSONObject> iterator = vulns.iterator();
         while (iterator.hasNext()) {
-            JSONObject vuln = (JSONObject)iterator.next();
+            JSONObject vuln = iterator.next();
             vulnIdSet.add((String)vuln.get("id"));
-            Integer severityInt = severityMap.get((String)vuln.get("severity"));
+            Integer severityInt = severityMap.get(vuln.get("severity"));
             if(severityInt != null && severityInt > highestSeverity) {
                 highestSeverity = severityInt;
             }

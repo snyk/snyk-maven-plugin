@@ -216,8 +216,7 @@ public class SnykMonitor extends AbstractMojo {
      * @return the full URL of the recorded project
      */
     private String getMonitorWebURL(String org, String id) {
-        String url = baseUrl + "/org/" + org + "/monitor/" + id;
-        return url;
+        return baseUrl + "/org/" + org + "/monitor/" + id;
     }
 
     /**

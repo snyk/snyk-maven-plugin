@@ -2,10 +2,13 @@ package io.snyk.maven.plugins;
 
 import org.apache.maven.project.MavenProject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 /**
  * Created by dror on 16/05/2017.
@@ -21,33 +24,13 @@ public class SnykPolicy {
      */
     public static String readPolicyFile(MavenProject project) {
         String snykFilename = getPolicyFilePath(project);
-        if(snykFilename == null) {
-            return null;
-        }
+        if(snykFilename == null) { return null; }
+        String sep = System.getProperty("line.separator");
 
-        BufferedReader br = null;
-        FileReader fr = null;
-        try {
-            fr = new FileReader(snykFilename);
-            br = new BufferedReader(fr);
-            String sCurrentLine;
-            br = new BufferedReader(new FileReader(snykFilename));
-            String contents = "";
-            while ((sCurrentLine = br.readLine()) != null) {
-                contents += sCurrentLine + System.getProperty("line.separator");
-            }
-            return contents;
+        try (Stream<String> stream = Files.lines(Paths.get(snykFilename))) {
+            return stream.map(v -> v + sep).reduce("", String::concat);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (br != null)
-                    br.close();
-                if (fr != null)
-                    fr.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
         }
         return null;
     }
@@ -62,11 +45,14 @@ public class SnykPolicy {
         if(project == null || project.getBasedir() == null) {
             return null;
         }
-        String filename = project.getBasedir().toString() + File.separator + Constants.SNYK_FILENAME;
-        File f = new File(filename);
+
+        Path baseDir = project.getBasedir().toPath();
+        Path filePath = baseDir.resolve(Constants.SNYK_FILENAME);
+        File f = filePath.toFile();
         if(f.exists() && !f.isDirectory()) {
-            return filename;
+            return filePath.toString();
+        } else {
+            return getPolicyFilePath(project.getParent());
         }
-        return getPolicyFilePath(project.getParent());
     }
 }

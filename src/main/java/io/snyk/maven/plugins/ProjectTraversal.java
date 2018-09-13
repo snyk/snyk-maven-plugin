@@ -54,9 +54,10 @@ public class ProjectTraversal {
 
     private void collectDependencies() throws DependencyCollectionException {
         Artifact artifact = new DefaultArtifact(
-                project.getGroupId() + ":" +
-                        project.getArtifactId() + ":" +
-                        project.getVersion());
+            project.getGroupId() + ":" +
+            project.getArtifactId() + ":" +
+            project.getVersion()
+        );
 
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( new Dependency( artifact, JavaScopes.COMPILE ) );
@@ -113,15 +114,16 @@ public class ProjectTraversal {
 
     private static List<RemoteRepository> newRepositories()
     {
-        return new ArrayList<RemoteRepository>( Arrays.asList( newCentralRepository() ) );
+        return new ArrayList<>( Arrays.asList( newCentralRepository() ) );
     }
 
     private static RemoteRepository newCentralRepository()
     {
         return new RemoteRepository.Builder(
-                "central",
-                "default",
-                "http://central.maven.org/maven2/" ).build();
+            "central",
+            "default",
+            "http://central.maven.org/maven2/"
+        ).build();
     }
 
 }
