@@ -64,3 +64,12 @@ The following are elements in the `<configuration></configuration>` section of t
 - The **test** goal presents a list of vulnerabilities in your project's dependencies, in either a developer's machine or in your CI process.
 - The **monitor** goal records the state of dependencies and any vulnerabilities on snyk.io so you can be alerted when new vulnerabilities or updates/patches are disclosed that affect your repositories.
 - Running `mvn snyk:test` or `mvn snyk:monitor` will run the desired goals (either **test** or **monitor**) outside the Maven build lifecycle.
+
+
+## Development setup
+`export SNYK_API_TOKEN="*********-****-****-****-****"`
+`export SNYK_API_ENDPOINT="https://snyk.io/"`
+## Get maven
+`brew install maven`
+### Running the build & tests
+`mvn clean install -Prun-its`
