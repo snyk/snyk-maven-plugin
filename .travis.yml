@@ -4,3 +4,15 @@ script: "mvn clean install -Prun-its"
 branches:
   only:
   - master
+
+after_failure:
+  - "echo =================================================="
+  - "echo = SINGLE MODULE BUILD"
+  - "echo =================================================="
+  - "cat ./target/it/single-module/build.log"
+  - "echo"
+  - "echo =================================================="
+  - "echo = MULTI MODULE BUILD"
+  - "echo =================================================="
+  - "cat ./target/it/multi-module/build.log"
+
