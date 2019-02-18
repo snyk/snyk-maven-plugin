@@ -42,7 +42,7 @@ The Snyk Maven plugin tests and monitors your Maven dependencies.
             </configuration>
         </plugin>
     </plugins>
-<build>
+</build>
 ```
 
 3. As seen in the snippet above, Snyk recommends to set the **test** goal in the **test** phase of Maven; and the **monitor** goal in the **install** phase of Maven.
