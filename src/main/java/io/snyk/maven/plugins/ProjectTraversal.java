@@ -16,8 +16,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,13 +28,15 @@ public class ProjectTraversal {
     private MavenProject project;
     private RepositorySystem repoSystem;
     private RepositorySystemSession repoSession;
+    private List<RemoteRepository> remoteRepositories;
 
     private JSONObject tree;
     public JSONObject getTree() { return this.tree; }
 
     public ProjectTraversal(MavenProject project,
                             RepositorySystem repoSystem,
-                            RepositorySystemSession repoSession) {
+                            RepositorySystemSession repoSession,
+                            List<RemoteRepository> remoteRepositories) {
         if(project == null || repoSystem == null || repoSession == null) {
             throw new InvalidParameterException();
         }
@@ -44,6 +44,7 @@ public class ProjectTraversal {
         this.project = project;
         this.repoSystem = repoSystem;
         this.repoSession = repoSession;
+        this.remoteRepositories = remoteRepositories;
 
         try {
             this.collectDependencies();
@@ -61,7 +62,7 @@ public class ProjectTraversal {
 
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( new Dependency( artifact, JavaScopes.COMPILE ) );
-        collectRequest.setRepositories( newRepositories() );
+        collectRequest.setRepositories( remoteRepositories );
 
         CollectResult collectResult = repoSystem.collectDependencies( repoSession, collectRequest );
         DependencyNode node = collectResult.getRoot();
@@ -111,19 +112,4 @@ public class ProjectTraversal {
 
         return treeNode;
     }
-
-    private static List<RemoteRepository> newRepositories()
-    {
-        return new ArrayList<>( Arrays.asList( newCentralRepository() ) );
-    }
-
-    private static RemoteRepository newCentralRepository()
-    {
-        return new RemoteRepository.Builder(
-            "central",
-            "default",
-            "http://central.maven.org/maven2/"
-        ).build();
-    }
-
 }
