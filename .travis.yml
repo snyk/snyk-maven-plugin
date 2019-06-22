@@ -2,8 +2,11 @@ language: java
 sudo: false
 
 jdk:
-  - oraclejdk9
   - openjdk8
+
+cache:
+  directories:
+    - "$HOME/.m2/repository"
 
 script: "mvn clean install -Prun-its"
 
