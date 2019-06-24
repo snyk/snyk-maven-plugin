@@ -1,8 +1,9 @@
 language: java
 sudo: false
+dist: trusty
 
 jdk:
-  - openjdk8
+  - oraclejdk8
 
 cache:
   directories:
