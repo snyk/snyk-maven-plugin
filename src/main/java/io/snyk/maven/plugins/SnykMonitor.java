@@ -16,6 +16,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.rtinfo.RuntimeInformation;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -25,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dror on 15/01/2017.
@@ -45,6 +48,12 @@ public class SnykMonitor extends AbstractMojo {
     // The current repository/network configuration of Maven.
     @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
     private RepositorySystemSession repoSession;
+
+    @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
+    private List<RemoteRepository> remoteProjectRepositories;
+
+    @Parameter(defaultValue = "${project.remotePluginRepositories}", readonly = true)
+    private List<RemoteRepository> remotePluginRepositories;
 
     @Component
     private RuntimeInformation runtimeInformation;
@@ -91,8 +100,17 @@ public class SnykMonitor extends AbstractMojo {
             return;
         }
 
+        for (RemoteRepository remoteProjectRepository : remoteProjectRepositories) {
+            getLog().debug("Remote project repository: " + remoteProjectRepository);
+        }
+        for (RemoteRepository remotePluginRepository : remotePluginRepositories) {
+            getLog().debug("Remote plugin repository: " + remotePluginRepository);
+        }
+        List<RemoteRepository> remoteRepositories = new ArrayList<>(remoteProjectRepositories);
+        remoteRepositories.addAll(remotePluginRepositories);
+
         JSONObject projectTree = new ProjectTraversal(
-                project, repoSystem, repoSession).getTree();
+                project, repoSystem, repoSession, remoteRepositories).getTree();
         HttpResponse response = sendDataToSnyk(projectTree);
         parseResponse(response);
     }
