@@ -7,8 +7,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -89,13 +87,11 @@ public class SnykMonitor extends AbstractMojo {
 
     /**
      * main engine for this Mojo
-     * @throws MojoExecutionException
-     * @throws MojoFailureException
      * @throws IOException
      * @throws ParseException
      */
     private void executeInternal()
-            throws MojoExecutionException, MojoFailureException, IOException, ParseException {
+            throws IOException, ParseException {
         if(!validateParameters()) {
             return;
         }
@@ -118,9 +114,8 @@ public class SnykMonitor extends AbstractMojo {
     /**
      * validate the plugin's parameters
      * @return false if validation didn't pass
-     * @throws MojoExecutionException
      */
-    private boolean validateParameters() throws MojoExecutionException {
+    private boolean validateParameters() {
         boolean validated = true;
         if(apiToken.equals("")) {
             Constants.displayAuthError(getLog());
@@ -137,10 +132,9 @@ public class SnykMonitor extends AbstractMojo {
      * @param projectTree the dependencies tree as collected by ProjectTraversal
      * @return the HTTP response object
      * @throws IOException
-     * @throws ParseException
      */
     private HttpResponse sendDataToSnyk(JSONObject projectTree)
-            throws IOException, ParseException {
+            throws IOException {
         HttpPut request = new HttpPut(baseUrl + "/api/monitor/maven");
         request.addHeader("authorization", "token " + apiToken);
         request.addHeader("x-is-ci", "false"); // how do we know ??
@@ -194,10 +188,9 @@ public class SnykMonitor extends AbstractMojo {
      * @param response the HTTP response from the call to Snyk
      * @throws IOException
      * @throws ParseException
-     * @throws MojoFailureException
      */
     private void parseResponse(HttpResponse response)
-            throws IOException, ParseException, MojoFailureException {
+            throws IOException, ParseException {
         if(response.getStatusLine().getStatusCode() >= 400) {
             processError(response);
             return;

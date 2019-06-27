@@ -7,7 +7,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -23,7 +22,6 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -103,12 +101,10 @@ public class SnykTest extends AbstractMojo {
 
     /**
      * main engine for this Mojo
-     * @throws MojoExecutionException
      * @throws MojoFailureException
      * @throws IOException
-     * @throws ParseException
      */
-    private void executeInternal() throws MojoExecutionException, MojoFailureException, IOException {
+    private void executeInternal() throws MojoFailureException, IOException {
         if(!validateParameters()) {
             return;
         }
@@ -132,7 +128,6 @@ public class SnykTest extends AbstractMojo {
     /**
      * validate the plugin's parameters
      * @return false if validation didn't pass
-     * @throws MojoExecutionException
      */
     private boolean validateParameters() {
         boolean validated = true;
@@ -172,8 +167,6 @@ public class SnykTest extends AbstractMojo {
     /**
      * parse Snyk's response and present it in the build log
      * @param response the HTTP response from the call to Snyk
-     * @throws IOException
-     * @throws ParseException
      * @throws MojoFailureException
      */
     private void parseResponse(HttpResponse response) throws MojoFailureException {
