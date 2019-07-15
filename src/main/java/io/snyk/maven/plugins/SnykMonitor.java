@@ -5,13 +5,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.rtinfo.RuntimeInformation;
+import org.apache.maven.settings.Settings;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -33,7 +33,7 @@ import java.util.List;
  * Records the current state of dependencies of the project in the Snyk system.
  * This record will be continuously scanned to alert the user for new or updated vulnerabilities.
  */
-@Mojo( name = "monitor")
+@Mojo(name = "monitor")
 public class SnykMonitor extends AbstractMojo {
 
     @Parameter(property = "project", required = true, readonly = true)
@@ -52,6 +52,9 @@ public class SnykMonitor extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.remotePluginRepositories}", readonly = true)
     private List<RemoteRepository> remotePluginRepositories;
+
+    @Parameter(defaultValue = "${settings}", readonly = true, required = true)
+    private Settings settings;
 
     @Component
     private RuntimeInformation runtimeInformation;
@@ -75,7 +78,7 @@ public class SnykMonitor extends AbstractMojo {
     public void execute() {
         try {
             executeInternal();
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             if (getLog().isDebugEnabled()) {
                 getLog().error(Constants.ERROR_GENERAL, t);
             } else {
@@ -92,7 +95,7 @@ public class SnykMonitor extends AbstractMojo {
      */
     private void executeInternal()
             throws IOException, ParseException {
-        if(!validateParameters()) {
+        if (!validateParameters()) {
             return;
         }
 
@@ -113,11 +116,12 @@ public class SnykMonitor extends AbstractMojo {
 
     /**
      * validate the plugin's parameters
+     *
      * @return false if validation didn't pass
      */
     private boolean validateParameters() {
         boolean validated = true;
-        if(apiToken.equals("")) {
+        if (apiToken.equals("")) {
             Constants.displayAuthError(getLog());
             validated = false;
         }
@@ -144,7 +148,8 @@ public class SnykMonitor extends AbstractMojo {
         HttpEntity entity = new StringEntity(jsonDependencies.toString());
         request.setEntity(entity);
 
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClientHelper httpClientHelper = new HttpClientHelper(getLog(), settings);
+        HttpClient client = httpClientHelper.buildHttpClient();
         return client.execute(request);
     }
 
@@ -191,7 +196,7 @@ public class SnykMonitor extends AbstractMojo {
      */
     private void parseResponse(HttpResponse response)
             throws IOException, ParseException {
-        if(response.getStatusLine().getStatusCode() >= 400) {
+        if (response.getStatusLine().getStatusCode() >= 400) {
             processError(response);
             return;
         }
