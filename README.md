@@ -1,5 +1,9 @@
 ![Snyk logo](https://snyk.io/style/asset/logo/snyk-print.svg)
 
+![Travis](https://img.shields.io/travis/snyk/snyk-maven-plugin.svg)
+
+![Snyk Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/snyk/snyk-maven-plugin.svg)
+
 ***
 
 Snyk helps you find, fix and monitor for known vulnerabilities in Node.js npm, Ruby and Java dependencies, both on an ad hoc basis and as part of your CI (Build) system.
