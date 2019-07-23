@@ -1,6 +1,7 @@
 package io.snyk.maven.plugins;
 
 import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
@@ -12,6 +13,8 @@ import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.util.artifact.JavaScopes;
+import org.eclipse.aether.util.graph.selector.AndDependencySelector;
+import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -28,7 +31,9 @@ public class ProjectTraversal {
     private MavenProject project;
     private RepositorySystem repoSystem;
     private RepositorySystemSession repoSession;
+    private DefaultRepositorySystemSession session;
     private List<RemoteRepository> remoteRepositories;
+    private boolean includeProvidedDependencies;
 
     private JSONObject tree;
     public JSONObject getTree() { return this.tree; }
@@ -36,7 +41,8 @@ public class ProjectTraversal {
     public ProjectTraversal(MavenProject project,
                             RepositorySystem repoSystem,
                             RepositorySystemSession repoSession,
-                            List<RemoteRepository> remoteRepositories) {
+                            List<RemoteRepository> remoteRepositories,
+                            boolean includeProvidedDependencies) {
         if(project == null || repoSystem == null || repoSession == null) {
             throw new InvalidParameterException();
         }
@@ -44,7 +50,9 @@ public class ProjectTraversal {
         this.project = project;
         this.repoSystem = repoSystem;
         this.repoSession = repoSession;
+        this.session = new DefaultRepositorySystemSession(repoSession);
         this.remoteRepositories = remoteRepositories;
+        this.includeProvidedDependencies = includeProvidedDependencies;
 
         try {
             this.collectDependencies();
@@ -60,11 +68,15 @@ public class ProjectTraversal {
             project.getVersion()
         );
 
+        if (includeProvidedDependencies) {
+            session.setDependencySelector(new AndDependencySelector(new ScopeDependencySelector(JavaScopes.PROVIDED)));
+        }
+
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( new Dependency( artifact, JavaScopes.COMPILE ) );
         collectRequest.setRepositories( remoteRepositories );
 
-        CollectResult collectResult = repoSystem.collectDependencies( repoSession, collectRequest );
+        CollectResult collectResult = repoSystem.collectDependencies( session, collectRequest );
         DependencyNode node = collectResult.getRoot();
 
         this.tree = getJsonTree(node);
