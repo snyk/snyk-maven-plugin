@@ -70,7 +70,7 @@ public class SnykTest extends AbstractMojo {
     private String endpoint = Constants.DEFAULT_ENDPOINT;
 
     @Parameter
-    private boolean includeProvidedDependencies = false;
+    private boolean includeProvidedDependencies = true;
 
     private String baseUrl = "";
 

@@ -69,7 +69,7 @@ public class SnykMonitor extends AbstractMojo {
     private String endpoint = Constants.DEFAULT_ENDPOINT;
 
     @Parameter
-    private boolean includeProvidedDependencies = false;
+    private boolean includeProvidedDependencies = true;
 
     private String baseUrl = "";
 
