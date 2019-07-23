@@ -23,7 +23,6 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -69,6 +68,9 @@ public class SnykTest extends AbstractMojo {
 
     @Parameter
     private String endpoint = Constants.DEFAULT_ENDPOINT;
+
+    @Parameter
+    private boolean includeProvidedDependencies = true;
 
     private String baseUrl = "";
 
@@ -123,7 +125,7 @@ public class SnykTest extends AbstractMojo {
         remoteRepositories.addAll(remotePluginRepositories);
 
         JSONObject projectTree = new ProjectTraversal(
-                project, repoSystem, repoSession, remoteRepositories).getTree();
+                project, repoSystem, repoSession, remoteRepositories, includeProvidedDependencies).getTree();
 
         HttpResponse response = sendDataToSnyk(projectTree);
         parseResponse(response);
