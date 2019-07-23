@@ -14,12 +14,17 @@ import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
+import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
+import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.security.InvalidParameterException;
 import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 /**
  * Created by dror on 16/01/2017.
@@ -69,7 +74,10 @@ public class ProjectTraversal {
         );
 
         if (includeProvidedDependencies) {
-            session.setDependencySelector(new AndDependencySelector(new ScopeDependencySelector(JavaScopes.PROVIDED)));
+            session.setDependencySelector(new AndDependencySelector(new ScopeDependencySelector(asList(JavaScopes.COMPILE, JavaScopes.PROVIDED),
+                                                                                                singletonList(JavaScopes.TEST)),
+                                                                    new OptionalDependencySelector(),
+                                                                    new ExclusionDependencySelector()));
         }
 
         CollectRequest collectRequest = new CollectRequest();
