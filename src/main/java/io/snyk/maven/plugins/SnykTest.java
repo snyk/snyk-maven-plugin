@@ -5,13 +5,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -20,7 +20,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +56,9 @@ public class SnykTest extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.remotePluginRepositories}", readonly = true)
     private List<RemoteRepository> remotePluginRepositories;
+
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
+    private Settings settings;
 
     // specific snyk plugin configurations
     @Parameter
@@ -163,7 +168,8 @@ public class SnykTest extends AbstractMojo {
         HttpEntity entity = new StringEntity(projectTree.toString());
         request.setEntity(entity);
 
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClientHelper httpClientHelper = new HttpClientHelper(getLog(), settings);
+        HttpClient client = httpClientHelper.buildHttpClient();
         return client.execute(request);
     }
 
