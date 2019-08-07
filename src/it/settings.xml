@@ -7,6 +7,9 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <properties>
+                <snyk.maven.plugin.version>1.2.2</snyk.maven.plugin.version>
+            </properties>
             <repositories>
                 <repository>
                     <id>local.central</id>
