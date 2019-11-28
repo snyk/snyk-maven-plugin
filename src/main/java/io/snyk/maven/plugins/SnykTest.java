@@ -276,7 +276,7 @@ public class SnykTest extends AbstractMojo {
      */
     private void printVuln(JSONObject vuln) {
         getLog().warn("✗ " + vuln.get("severity") + " severity vulnerability found on " +
-                vuln.get("moduleName") + "@" +
+                vuln.get("packageName") + "@" +
                 vuln.get("version"));
         getLog().warn("- desc: " + vuln.get("title"));
         getLog().warn("- info: " + baseUrl + "/vuln/" + vuln.get("id"));
