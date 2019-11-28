@@ -157,7 +157,11 @@ public class SnykTest extends AbstractMojo {
      * @throws ParseException
      */
     private HttpResponse sendDataToSnyk(JSONObject projectTree) throws IOException {
-        HttpPost request = new HttpPost(baseUrl + "/api/vuln/maven/?applyPolicy=true");
+        String vulnMavenEndpoint = "/api/vuln/maven/?applyPolicy=true";
+        if (org != null && !org.isEmpty()) {
+            vulnMavenEndpoint += "&org=" + org;
+        }
+        HttpPost request = new HttpPost(baseUrl + vulnMavenEndpoint);
         request.addHeader("authorization", "token " + apiToken);
         request.addHeader("x-is-ci", "false"); // TODO: how do we know this ??
         request.addHeader("content-type", "application/json");
