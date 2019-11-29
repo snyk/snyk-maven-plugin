@@ -1,0 +1,18 @@
+/*
+ * verifying that the single-module integration test runs as expected
+ */
+
+import java.io.*;
+import org.codehaus.plexus.util.*;
+
+String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
+
+if(!log.contains("[WARNING] ? low severity vulnerability found on javax.servlet.jsp:jsp-api@2.1")) {
+    throw new Exception("Missing license issue (CDDL-1.1) for javax.servlet.jsp:jsp-api@2.1");
+}
+
+if(!log.contains("[WARNING] ? low severity vulnerability found on javax.servlet:servlet-api@2.5")) {
+    throw new Exception("Missing license issue (CDDL-1.1) for javax.servlet:servlet-api@2.5");
+}
+
+return true;
