@@ -38,6 +38,7 @@
                 <configuration>
                     <apiToken>${env.SNYK_API_TOKEN}</apiToken>
                     <endpoint>${env.SNYK_API_ENDPOINT}</endpoint>
+                    <org>${env.SNYK_ORG_ID}</org>
                     <failOnSeverity>false</failOnSeverity>
                 </configuration>
             </plugin>
