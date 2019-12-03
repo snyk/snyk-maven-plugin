@@ -1,5 +1,5 @@
 /*
- * verifying that the single-module integration test runs as expected
+ * verifying that the license-issues-module integration test runs as expected
  */
 
 import java.io.*;
@@ -7,12 +7,8 @@ import org.codehaus.plexus.util.*;
 
 String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
 
-if(!log.contains("[WARNING] ? low severity vulnerability found on javax.servlet.jsp:jsp-api@2.1")) {
-    throw new Exception("Missing license issue (CDDL-1.1) for javax.servlet.jsp:jsp-api@2.1");
-}
-
-if(!log.contains("[WARNING] ? low severity vulnerability found on javax.servlet:servlet-api@2.5")) {
-    throw new Exception("Missing license issue (CDDL-1.1) for javax.servlet:servlet-api@2.5");
+if(!log.contains("[WARNING] - info: https://dev.snyk.io/vuln/snyk:lic:maven:junit:junit:EPL-1.0")) {
+    throw new Exception("Missing license issue (EPL-1.0) for junit:junit@4.12");
 }
 
 return true;
