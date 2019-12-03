@@ -1,0 +1,14 @@
+/*
+ * verifying that the license-issues-module integration test runs as expected
+ */
+
+import java.io.*;
+import org.codehaus.plexus.util.*;
+
+String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
+
+if(!log.contains("[WARNING] - info: https://dev.snyk.io/vuln/snyk:lic:maven:junit:junit:EPL-1.0")) {
+    throw new Exception("Missing license issue (EPL-1.0) for junit:junit@4.12");
+}
+
+return true;
