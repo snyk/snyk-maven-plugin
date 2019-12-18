@@ -61,6 +61,7 @@ The following are elements in the `<configuration></configuration>` section of t
 
 - **apiToken** (mandatory): The **apiToken** is used to authenticate with the Snyk services. With the API token, the plugin can be configured with it as a system property or environment variable. The token can also be manually added to the pom.xml, although this is not the recommended method. This is mandatory configuration.
 - **failOnSeverity** (optional): Setting **failOnSeverity** to any of the values (`low`, `medium` or `high`) will fail the Maven build if a severity is found at or above what was configured. This configuration is optional, and will be set to `low` if not defined. Setting it to `false` will never fail the build.
+- **failOnCount** (optional): Setting **failOnCount** to higher than `0` will fail the Maven build if more vulnerabilities are found. This configuration is optional, and will be set to `0` if not defined.  **failOnSeverity** should be set to false, when using **failOnCount**.
 - **org** (optional): The **org** configuration element sets under which of your Snyk organisations the project will be recorded. Leaving out this configuration will record the project under your default organisation.
 - **includeProvidedDependencies** (optional): The **includeProvidedDependencies** configuration element allows to include dependencies with `provided` scope. Default value is `true`.
 

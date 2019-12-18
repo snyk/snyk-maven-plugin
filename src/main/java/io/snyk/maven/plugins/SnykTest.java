@@ -71,6 +71,9 @@ public class SnykTest extends AbstractMojo {
     private String failOnSeverity = "low";
 
     @Parameter
+    private Integer failOnCount = 0;
+
+    @Parameter
     private String endpoint = Constants.DEFAULT_ENDPOINT;
 
     @Parameter
@@ -270,6 +273,11 @@ public class SnykTest extends AbstractMojo {
                 msg +=  " or higher";
             }
             msg += ".";
+            throw new MojoFailureException(msg);
+        }
+
+        if(failOnCount > 0 && vulns.size() >= failOnCount) {
+            String msg = "Found vulnerabilities " + vulns.size() + ", which is more than the allowed " + failOnCount + ".";
             throw new MojoFailureException(msg);
         }
     }
