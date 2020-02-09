@@ -6,6 +6,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -72,6 +73,9 @@ public class SnykMonitor extends AbstractMojo {
     @Parameter
     private boolean includeProvidedDependencies = true;
 
+    @Parameter
+    private boolean failOnAuthError = false;
+
     private String baseUrl = "";
 
     /**
@@ -97,7 +101,7 @@ public class SnykMonitor extends AbstractMojo {
      * @throws ParseException
      */
     private void executeInternal()
-            throws IOException, ParseException {
+            throws IOException, ParseException, MojoFailureException {
         if (!validateParameters()) {
             return;
         }
@@ -122,10 +126,10 @@ public class SnykMonitor extends AbstractMojo {
      *
      * @return false if validation didn't pass
      */
-    private boolean validateParameters() {
+    private boolean validateParameters() throws MojoFailureException {
         boolean validated = true;
         if (apiToken.equals("")) {
-            Constants.displayAuthError(getLog());
+            Constants.displayAuthError(getLog(), failOnAuthError);
             validated = false;
         }
         baseUrl = Constants.parseEndpoint(endpoint);
@@ -198,7 +202,7 @@ public class SnykMonitor extends AbstractMojo {
      * @throws ParseException
      */
     private void parseResponse(HttpResponse response)
-            throws IOException, ParseException {
+            throws IOException, ParseException, MojoFailureException {
         if (response.getStatusLine().getStatusCode() >= 400) {
             processError(response);
             return;
@@ -243,10 +247,10 @@ public class SnykMonitor extends AbstractMojo {
      * and log it in the build log
      * @param response an HTTP response object
      */
-    private void processError(HttpResponse response) {
+    private void processError(HttpResponse response) throws MojoFailureException {
         // process an error in the response object
         if(response.getStatusLine().toString().contains("401")) {
-            Constants.displayAuthError(getLog());
+            Constants.displayAuthError(getLog(),failOnAuthError);
         } else {
             getLog().error("Bad response from Snyk: " +
                 response.getStatusLine().toString());

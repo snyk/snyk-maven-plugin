@@ -2,6 +2,8 @@ package io.snyk.maven.plugins;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -9,6 +11,14 @@ import org.apache.maven.plugin.logging.Log;
  * Created by dror on 05/05/2017.
  */
 public class Constants {
+
+    private static final String ERROR_UNAUTHORIZED_MORE_INFO = "See https://snyk.io/docs/using-snyk#authentication " +
+            "for more information.";
+
+    private static final String ERROR_UNAUTHORIZED_ENSURE_API_TOKEN = "Please ensure you have provided your Snyk's API token " +
+            "in the <apiToken></apiToken> plugin configuration option.";
+
+    private static final String ERROR_UNAUTHORIZED_SNYK_PLUGIN = "Unauthorized Snyk plugin.";
 
     public static final String SNYK_FILENAME = ".snyk";
 
@@ -42,12 +52,14 @@ public class Constants {
      * display a generic authentication error message to the build log
      * @param log the build log
      */
-    public static void displayAuthError(Log log) {
-        log.error("Unauthorized Snyk plugin.");
-        log.error("Please ensure you have provided your Snyk's API token " +
-                "in the <apiToken></apiToken> plugin configuration option.");
-        log.error("See https://snyk.io/docs/using-snyk#authentication " +
-                "for more information.");
+    public static void displayAuthError(Log log, boolean failOnAuthError) throws MojoFailureException {
+        if (failOnAuthError) {
+            throw new MojoFailureException(
+                    String.join(" ", ERROR_UNAUTHORIZED_SNYK_PLUGIN, ERROR_UNAUTHORIZED_ENSURE_API_TOKEN, ERROR_UNAUTHORIZED_MORE_INFO));
+        }
+        log.error(ERROR_UNAUTHORIZED_SNYK_PLUGIN);
+        log.error(ERROR_UNAUTHORIZED_ENSURE_API_TOKEN);
+        log.error(ERROR_UNAUTHORIZED_MORE_INFO);
     }
 
 }

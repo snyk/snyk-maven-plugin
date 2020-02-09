@@ -4,7 +4,7 @@
 
   <groupId>io.snyk</groupId>
   <artifactId>snyk-maven-plugin</artifactId>
-  <version>1.2.5</version>
+  <version>1.2.6-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Snyk.io Maven Plugin</name>
