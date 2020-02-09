@@ -12,11 +12,9 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class Constants {
 
-    private static final String ERROR_UNAUTHORIZED_MORE_INFO = "See https://snyk.io/docs/using-snyk#authentication " +
-            "for more information.";
+    private static final String ERROR_UNAUTHORIZED_MORE_INFO = "See https://snyk.io/docs/using-snyk#authentication for more information.";
 
-    private static final String ERROR_UNAUTHORIZED_ENSURE_API_TOKEN = "Please ensure you have provided your Snyk's API token " +
-            "in the <apiToken></apiToken> plugin configuration option.";
+    private static final String ERROR_UNAUTHORIZED_ENSURE_API_TOKEN = "Please ensure you have provided your Snyk's API token in the <apiToken></apiToken> plugin configuration option.";
 
     private static final String ERROR_UNAUTHORIZED_SNYK_PLUGIN = "Unauthorized Snyk plugin.";
 
@@ -26,8 +24,7 @@ public class Constants {
 
     public static final String ERROR_GENERAL = "There was a problem with the Snyk plugin.";
 
-    public static final String ERROR_RERUN_WITH_DEBUG =
-        "Re-run Maven using the -X switch to enable full debug logging.";
+    public static final String ERROR_RERUN_WITH_DEBUG = "Re-run Maven using the -X switch to enable full debug logging.";
 
     private Constants() {}
 
