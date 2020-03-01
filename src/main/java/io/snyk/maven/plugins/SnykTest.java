@@ -76,6 +76,9 @@ public class SnykTest extends AbstractMojo {
     @Parameter
     private boolean includeProvidedDependencies = true;
 
+    @Parameter
+    private boolean failOnAuthError = false;
+
     private String baseUrl = "";
 
     private static int SEVERITY_LOW     = 100;
@@ -137,10 +140,10 @@ public class SnykTest extends AbstractMojo {
      * validate the plugin's parameters
      * @return false if validation didn't pass
      */
-    private boolean validateParameters() {
+    private boolean validateParameters() throws MojoFailureException {
         boolean validated = true;
         if(apiToken.isEmpty()) {
-            Constants.displayAuthError(getLog());
+            Constants.displayAuthError(getLog(), failOnAuthError);
             validated = false;
         }
         baseUrl = Constants.parseEndpoint(endpoint);
@@ -206,10 +209,10 @@ public class SnykTest extends AbstractMojo {
      * and log it in the build log
      * @param response an HTTP response object
      */
-    private void processError(HttpResponse response) {
+    private void processError(HttpResponse response) throws MojoFailureException {
         // process an error in the response object
         if(response.getStatusLine().toString().contains("401")) {
-            Constants.displayAuthError(getLog());
+            Constants.displayAuthError(getLog(), failOnAuthError);
         } else {
             getLog().error("Bad response from Snyk: " +
                 response.getStatusLine().toString());
