@@ -289,14 +289,46 @@ public class SnykTest extends AbstractMojo {
         getLog().warn("- info: " + baseUrl + "/vuln/" + vuln.get("id"));
         if(vuln.get("from") != null) {
             JSONArray fromArr = (JSONArray)vuln.get("from");
-            String fromStr = "";
-            for(int i = 0; i < fromArr.size(); i++) {
-                fromStr += fromArr.get(i) + " > ";
-            }
-            fromStr = fromStr.substring(0, fromStr.length() - 3);
-            getLog().warn("- from: " + fromStr);
+            getLog().warn("- from: " + printJSONArray(fromArr, " > "));
         }
+
+        getLog().warn("- fix: " + findFix(vuln));
         getLog().warn("");
+    }
+
+    private String findFix(JSONObject vuln) {
+        String noUpgrade = "No direct upgrade available";
+
+        if (vuln.get("isUpgradable") != null && (boolean)vuln.get("isUpgradable")) {
+            JSONArray upgradePath = (JSONArray)vuln.get("upgradePath");
+
+            //if isUpgradable and upgradePath is available the first item is a boolean "false" the second item is the top level dep.
+            //check if upgrade is not same package as original
+            if (upgradePath.size() >= 2 && vuln.get("from") != null) {
+                JSONArray fromArr = (JSONArray)vuln.get("from");
+                if (!fromArr.contains(upgradePath.get(1))) return "update to " + upgradePath.get(1);
+            }
+        }
+
+        if (vuln.get("fixedIn") != null) {
+            JSONArray fixedIn = (JSONArray)vuln.get("fixedIn");
+            if (!fixedIn.isEmpty()) noUpgrade += " - This issue was fixed in versions: " + printJSONArray(fixedIn, ", ");
+        }
+
+        return noUpgrade;
+    }
+
+    private String printJSONArray(JSONArray array, String delimiter) {
+        StringBuilder result = new StringBuilder();
+        Iterator<JSONObject> iterator = array.iterator();
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            result.append(object);
+            if (iterator.hasNext()) {
+                result.append(delimiter);
+            }
+        }
+        return result.toString();
     }
 
 }
