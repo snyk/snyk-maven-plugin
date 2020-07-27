@@ -216,6 +216,9 @@ public class SnykTest extends AbstractMojo {
         } else {
             getLog().error("Bad response from Snyk: " +
                 response.getStatusLine().toString());
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Snyk http response: " + parseResponseBody(response));
+            }
         }
     }
 
