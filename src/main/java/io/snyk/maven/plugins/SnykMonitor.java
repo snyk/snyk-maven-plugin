@@ -254,6 +254,22 @@ public class SnykMonitor extends AbstractMojo {
         } else {
             getLog().error("Bad response from Snyk: " +
                 response.getStatusLine().toString());
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Snyk http response: " + parseResponseBody(response));
+            }
+        }
+    }
+
+    private JSONObject parseResponseBody(HttpResponse response) {
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject jsonObject = (JSONObject)parser.parse(
+                new BufferedReader(
+                    new InputStreamReader(
+                        response.getEntity().getContent())));
+            return jsonObject;
+        } catch (IOException|ParseException e) {
+            return null;
         }
     }
 }
