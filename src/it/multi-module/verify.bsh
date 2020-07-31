@@ -7,11 +7,11 @@ import org.codehaus.plexus.util.*;
 
 String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
 
-if(log.contains("SNYK-JAVA-XALAN-31385")) {
+if(log.contains("/SNYK-JAVA-XALAN-31385")) {
     throw new Exception("Vulnerability 'SNYK-JAVA-XALAN-31385' was not ignored per policy file");
 }
 
-if(log.contains("SNYK-JAVA-AXIS-30071")) {
+if(log.contains("/SNYK-JAVA-AXIS-30071")) {
     throw new Exception("Vulnerability 'SNYK-JAVA-AXIS-30071' was not ignored per policy file");
 }
 
