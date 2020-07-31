@@ -175,6 +175,10 @@ public class SnykTest extends AbstractMojo {
         HttpEntity entity = new StringEntity(projectTree.toString());
         request.setEntity(entity);
 
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Snyk http request payload: " + projectTree);
+        }
+
         HttpClientHelper httpClientHelper = new HttpClientHelper(getLog(), settings);
         HttpClient client = httpClientHelper.buildHttpClient();
         return client.execute(request);
