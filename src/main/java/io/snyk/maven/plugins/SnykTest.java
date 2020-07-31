@@ -306,13 +306,17 @@ public class SnykTest extends AbstractMojo {
             //check if upgrade is not same package as original
             if (upgradePath.size() >= 2 && vuln.get("from") != null) {
                 JSONArray fromArr = (JSONArray)vuln.get("from");
-                if (!fromArr.contains(upgradePath.get(1))) return "update to " + upgradePath.get(1);
+                if (!fromArr.contains(upgradePath.get(1))) {
+                    return "update to " + upgradePath.get(1);
+                }
             }
         }
 
         if (vuln.get("fixedIn") != null) {
             JSONArray fixedIn = (JSONArray)vuln.get("fixedIn");
-            if (!fixedIn.isEmpty()) noUpgrade += " - This issue was fixed in versions: " + printJSONArray(fixedIn, ", ");
+            if (!fixedIn.isEmpty()) {
+                noUpgrade += " - This issue was fixed in versions: " + printJSONArray(fixedIn, ", ");
+            }
         }
 
         return noUpgrade;
