@@ -4,7 +4,7 @@
 
   <groupId>io.snyk</groupId>
   <artifactId>snyk-maven-plugin</artifactId>
-  <version>1.2.8</version>
+  <version>1.2.8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Snyk.io Maven Plugin</name>
@@ -34,7 +34,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <mavenVersion>3.1.0</mavenVersion>
     <aetherVersion>1.1.0</aetherVersion>
+
   </properties>
+
 
   <dependencies>
     <dependency>
@@ -214,6 +216,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>

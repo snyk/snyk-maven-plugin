@@ -1,5 +1,6 @@
 package io.snyk.maven.plugins;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -79,6 +80,9 @@ public class SnykTest extends AbstractMojo {
     @Parameter
     private boolean failOnAuthError = false;
 
+    @Parameter(property = "snyk.skip")
+    private boolean skip;
+
     private String baseUrl = "";
 
     private static int SEVERITY_LOW     = 100;
@@ -89,6 +93,9 @@ public class SnykTest extends AbstractMojo {
         severityMap.put("low",      SEVERITY_LOW);
         severityMap.put("medium",   SEVERITY_MEDIUM);
         severityMap.put("high",     SEVERITY_HIGH);
+    }
+
+    public SnykTest() {
     }
 
     /**
@@ -116,9 +123,16 @@ public class SnykTest extends AbstractMojo {
      * @throws IOException
      */
     private void executeInternal() throws MojoFailureException, IOException {
+
+        if(skip) {
+            getLog().info("Skip option detected. Skipping...");
+            return;
+        }
+
         if(!validateParameters()) {
             return;
         }
+
 
         for (RemoteRepository remoteProjectRepository : remoteProjectRepositories) {
             getLog().debug("Remote project repository: " + remoteProjectRepository);

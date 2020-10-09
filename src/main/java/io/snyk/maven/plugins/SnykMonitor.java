@@ -76,6 +76,9 @@ public class SnykMonitor extends AbstractMojo {
     @Parameter
     private boolean failOnAuthError = false;
 
+    @Parameter(property = "snyk.skip")
+    private boolean skip;
+
     private String baseUrl = "";
 
     /**
@@ -102,6 +105,12 @@ public class SnykMonitor extends AbstractMojo {
      */
     private void executeInternal()
             throws IOException, ParseException, MojoFailureException {
+
+        if(skip) {
+            getLog().info("Skip option detected. Skipping...");
+            return;
+        }
+
         if (!validateParameters()) {
             return;
         }
