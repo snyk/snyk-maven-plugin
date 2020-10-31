@@ -20,4 +20,6 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
     - name: Test with Maven
-      run: mvn test -B --file pom.xml
+      run: mvn -B --file pom.xml test
+    - name: Verify with Maven
+      run: mvn -B -f pom.xml verify
