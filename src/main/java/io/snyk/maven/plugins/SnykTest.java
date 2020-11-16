@@ -120,7 +120,7 @@ public class SnykTest extends AbstractMojo {
      */
     private void executeInternal() throws MojoFailureException, IOException {
         if (skip) {
-            getLog().info("Skip option detected. Skipping...");
+            getLog().info("Security tests are skipped");
             return;
         }
 

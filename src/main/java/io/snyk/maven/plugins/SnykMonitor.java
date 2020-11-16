@@ -106,7 +106,7 @@ public class SnykMonitor extends AbstractMojo {
     private void executeInternal()
             throws IOException, ParseException, MojoFailureException {
         if (skip) {
-            getLog().info("Skip option detected. Skipping...");
+            getLog().info("Security tests are skipped.");
             return;
         }
 
