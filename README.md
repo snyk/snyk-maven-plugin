@@ -22,7 +22,7 @@ The Snyk Maven plugin tests and monitors your Maven dependencies.
         <plugin>
             <groupId>io.snyk</groupId>
             <artifactId>snyk-maven-plugin</artifactId>
-            <version>1.2.7</version>
+            <version>1.2.9</version>
             <executions>
                 <execution>
                     <id>snyk-test</id>
