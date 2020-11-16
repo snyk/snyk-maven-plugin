@@ -79,6 +79,9 @@ public class SnykTest extends AbstractMojo {
     @Parameter
     private boolean failOnAuthError = false;
 
+    @Parameter(property = "snyk.skip")
+    private boolean skip;
+
     private String baseUrl = "";
 
     private static int SEVERITY_LOW     = 100;
@@ -116,6 +119,11 @@ public class SnykTest extends AbstractMojo {
      * @throws IOException
      */
     private void executeInternal() throws MojoFailureException, IOException {
+        if (skip) {
+            getLog().info("Security tests are skipped");
+            return;
+        }
+
         if(!validateParameters()) {
             return;
         }

@@ -64,6 +64,7 @@ The following are elements in the `<configuration></configuration>` section of t
 - **failOnSeverity** (optional): Setting **failOnSeverity** to any of the values (`low`, `medium` or `high`) will fail the Maven build if a severity is found at or above what was configured. This configuration is optional, and will be set to `low` if not defined. Setting it to `false` will never fail the build.
 - **org** (optional): The **org** configuration element sets under which of your Snyk organisations the project will be recorded. Leaving out this configuration will record the project under your default organisation.
 - **includeProvidedDependencies** (optional): The **includeProvidedDependencies** configuration element allows to include dependencies with `provided` scope. Default value is `true`.
+- **skip** (optional): The **skip** configuration element allows to skip plugin's execution when setting it to `true`. Default value is `false`.
 
 ## Features
 
