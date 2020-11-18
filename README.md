@@ -65,6 +65,7 @@ The following are elements in the `<configuration></configuration>` section of t
 - **org** (optional): The **org** configuration element sets under which of your Snyk organisations the project will be recorded. Leaving out this configuration will record the project under your default organisation.
 - **includeProvidedDependencies** (optional): The **includeProvidedDependencies** configuration element allows to include dependencies with `provided` scope. Default value is `true`.
 - **skip** (optional): The **skip** configuration element allows to skip plugin's execution when setting it to `true`. Default value is `false`.
+- **remoteRepoUrl** (optional): The **remoteRepoUrl** configuration element allows to override the Project group name in the Snyk UI. Leaving out this configuration will record the project under the default group name `groupId:artifactId`.
 
 ## Features
 
