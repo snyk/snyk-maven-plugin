@@ -82,6 +82,9 @@ public class SnykTest extends AbstractMojo {
     @Parameter(property = "snyk.skip")
     private boolean skip;
 
+    @Parameter(property = "snyk.longFormProjectName")
+    private boolean longFormProjectName;
+
     private String baseUrl = "";
 
     private static int SEVERITY_LOW     = 100;
@@ -139,6 +142,10 @@ public class SnykTest extends AbstractMojo {
 
         JSONObject projectTree = new ProjectTraversal(
                 project, repoSystem, repoSession, remoteRepositories, includeProvidedDependencies).getTree();
+
+        if (longFormProjectName) {
+            projectTree.replace("name", projectTree.get("name") + ":" + projectTree.get("version"));
+        }
 
         HttpResponse response = sendDataToSnyk(projectTree);
         parseResponse(response);

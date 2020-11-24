@@ -79,6 +79,9 @@ public class SnykMonitor extends AbstractMojo {
     @Parameter(property = "snyk.skip")
     private boolean skip;
 
+    @Parameter(property = "snyk.longFormProjectName")
+    private boolean longFormProjectName;
+
     private String baseUrl = "";
 
     /**
@@ -175,6 +178,10 @@ public class SnykMonitor extends AbstractMojo {
      */
     private JSONObject prepareRequestBody(JSONObject projectTree) {
         JSONObject body = new JSONObject();
+
+        if (longFormProjectName) {
+            projectTree.replace("name", projectTree.get("name") + ":" + projectTree.get("version"));
+        }
 
         JSONObject meta = new JSONObject();
         String groupId = project.getGroupId();
