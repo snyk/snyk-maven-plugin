@@ -1,0 +1,14 @@
+/*
+ * verifying that the non-fixable-issues-module integration test runs as expected
+ */
+
+import java.io.*;
+import org.codehaus.plexus.util.*;
+
+String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
+
+if(!log.contains("/SNYK-JAVA-COMMONSHTTPCLIENT-31660")) {
+    throw new Exception("Missing Vulnerability 'SNYK-JAVA-COMMONSHTTPCLIENT-31660' ");
+}
+
+return true;

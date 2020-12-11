@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.snyk.example</groupId>
-    <artifactId>single-module</artifactId>
+    <artifactId>non-fixable-issues-module</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>single module</name>
+    <name>non fixable issues module</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,24 +15,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
+            <version>2.0</version>
         </dependency>
     </dependencies>
 
@@ -53,8 +38,8 @@
                 <configuration>
                     <apiToken>${env.SNYK_API_TOKEN}</apiToken>
                     <endpoint>${env.SNYK_API_ENDPOINT}</endpoint>
-                    <failOnSeverity>false</failOnSeverity>
-                    <failOnlyFixable>true</failOnlyFixable>
+                    <failOnSeverity>low</failOnSeverity>
+                    <onlyFailFixable>true</onlyFailFixable>
                 </configuration>
             </plugin>
         </plugins>
