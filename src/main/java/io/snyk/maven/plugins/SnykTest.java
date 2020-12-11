@@ -79,6 +79,9 @@ public class SnykTest extends AbstractMojo {
     @Parameter
     private boolean failOnAuthError = false;
 
+    @Parameter
+    private boolean failOnlyFixable = false;
+
     @Parameter(property = "snyk.skip")
     private boolean skip;
 
@@ -269,7 +272,14 @@ public class SnykTest extends AbstractMojo {
             JSONObject vuln = iterator.next();
             vulnIdSet.add((String)vuln.get("id"));
             Integer severityInt = severityMap.get(vuln.get("severity"));
-            if(severityInt != null && severityInt > highestSeverity) {
+            //  If failOnlyFixable parameter is set, skip issues for which there is no fix in
+            //  severity calculation
+//            if (failOnlyFixable && vuln.get("isUpgradable") == null && vuln.get("fixedIn") == null) {
+//                getLog().warn("fail only fixable");
+//                printVuln(vuln);
+//                return;
+//            }
+            if (severityInt != null && severityInt > highestSeverity) {
                 highestSeverity = severityInt;
             }
             printVuln(vuln);
