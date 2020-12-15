@@ -67,6 +67,9 @@ public class SnykTest extends AbstractMojo {
     @Parameter
     private String org = "";
 
+    @Parameter(property = "snyk.remoteRepoUrl")
+    private String remoteRepoUrl = "";
+
     @Parameter
     private String failOnSeverity = "low";
 
@@ -139,6 +142,10 @@ public class SnykTest extends AbstractMojo {
 
         JSONObject projectTree = new ProjectTraversal(
                 project, repoSystem, repoSession, remoteRepositories, includeProvidedDependencies).getTree();
+
+        if (!remoteRepoUrl.equals("")) {
+            projectTree.replace("name", remoteRepoUrl);
+        }
 
         HttpResponse response = sendDataToSnyk(projectTree);
         parseResponse(response);

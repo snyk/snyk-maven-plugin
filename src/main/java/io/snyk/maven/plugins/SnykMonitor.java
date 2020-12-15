@@ -67,6 +67,9 @@ public class SnykMonitor extends AbstractMojo {
     @Parameter
     private String org = "";
 
+    @Parameter(property = "snyk.remoteRepoUrl")
+    private String remoteRepoUrl = "";
+
     @Parameter
     private String endpoint = Constants.DEFAULT_ENDPOINT;
 
@@ -175,6 +178,10 @@ public class SnykMonitor extends AbstractMojo {
      */
     private JSONObject prepareRequestBody(JSONObject projectTree) {
         JSONObject body = new JSONObject();
+
+        if (!remoteRepoUrl.equals("")) {
+            projectTree.replace("name", remoteRepoUrl);
+        }
 
         JSONObject meta = new JSONObject();
         String groupId = project.getGroupId();
