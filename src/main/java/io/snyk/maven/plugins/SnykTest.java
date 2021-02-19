@@ -79,6 +79,9 @@ public class SnykTest extends AbstractMojo {
     @Parameter
     private boolean failOnAuthError = false;
 
+    @Parameter
+    private boolean onlyFailFixable = false;
+
     @Parameter(property = "snyk.skip")
     private boolean skip;
 
@@ -262,15 +265,17 @@ public class SnykTest extends AbstractMojo {
         HashSet<String> vulnIdSet = new HashSet<String>();
 
         JSONArray vulns = (JSONArray)responseJson.get("vulnerabilities");
-        int highestSeverity = SEVERITY_LOW;
+        int highestSeverity = Integer.MIN_VALUE;
 
         Iterator<JSONObject> iterator = vulns.iterator();
         while (iterator.hasNext()) {
             JSONObject vuln = iterator.next();
             vulnIdSet.add((String)vuln.get("id"));
             Integer severityInt = severityMap.get(vuln.get("severity"));
-            if(severityInt != null && severityInt > highestSeverity) {
-                highestSeverity = severityInt;
+            if (!onlyFailFixable || (onlyFailFixable && isIssueFixable(vuln))) {
+                if (severityInt != null && severityInt > highestSeverity) {
+                    highestSeverity = severityInt;
+                }
             }
             printVuln(vuln);
         }
@@ -290,6 +295,17 @@ public class SnykTest extends AbstractMojo {
             msg += ".";
             throw new MojoFailureException(msg);
         }
+    }
+
+    private boolean isIssueFixable(JSONObject vuln) {
+        boolean upgradable =
+            (vuln.get("isUpgradable") != null && (boolean) vuln.get("isUpgradable"));
+        boolean fixable = false;
+        if (vuln.get("fixedIn") != null) {
+            JSONArray fixedIn = (JSONArray) vuln.get("fixedIn");
+            fixable = (!fixedIn.isEmpty());
+        }
+        return upgradable || fixable;
     }
 
     /**

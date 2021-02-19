@@ -32,3 +32,6 @@ buildNumber.properties
 **/out/
 **/.idea_modules/
 *.iml
+
+
+src/it/.DS_Store
