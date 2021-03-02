@@ -7,7 +7,7 @@ import org.codehaus.plexus.util.*;
 
 String log = FileUtils.fileRead( new File( basedir, "build.log" ) );
 
-if(!log.contains("[WARNING] - from: io.snyk.example:single-module@1.0-SNAPSHOT > axis:axis@1.4")) {
+if(!log.contains("[Medium Severity][https://snyk.io/vuln/SNYK-JAVA-AXIS-30071] in axis:axis@1.4")) {
     throw new Exception("Missing dependency: axis:axis@1.4");
 }
 
