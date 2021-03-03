@@ -91,13 +91,13 @@ public class SnykTest extends AbstractMojo {
      */
     public void execute() throws MojoFailureException {
         checkCLI();
+        authentication();
         Runner.Result result = Runner.runSnyk("test");
         log.info(result.getOutput());
 
         if (result.getExitcode() > 0 && severityMap.containsKey(failOnSeverity)) {
             throw new MojoFailureException("Snyk Test failed");
         }
-
     }
 
     private void checkCLI() throws MojoFailureException {
@@ -106,6 +106,35 @@ public class SnykTest extends AbstractMojo {
         } catch (IOException ioe) {
             log.error(ioe);
             throw new MojoFailureException(ioe.getMessage());
+        }
+    }
+
+    /*
+    - token can be env variable
+    - cli can already been authenticated (either in earlier run, or manually)
+    - cli will be authenticated using the token declared in the pom.xml
+     */
+    private void authentication() throws MojoFailureException{
+        log.debug("check auth");
+        String envToken = System.getenv("SNYK_TOKEN");
+        if (envToken != null && !envToken.isEmpty()) {
+            log.debug("api token found in env");
+            return;
+        }
+
+        String apiConfigToken = Runner.runSnyk("config get api").getOutput().trim();
+        if (apiConfigToken != null && !apiConfigToken.isEmpty()) {
+            log.debug("api token found");
+            return;
+        }
+
+        if (apiToken == null || apiToken.isEmpty()) {
+            throw new MojoFailureException("No API key found");
+        }
+
+        Runner.Result authResult = Runner.runSnyk("auth "+ apiToken);
+        if (authResult.failed()) {
+            throw new MojoFailureException("snyk auth went wrong: " + authResult.getOutput());
         }
     }
 }
