@@ -14,11 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by dror on 15/01/2017.
- *
- * Tests the current project's dependencies for vulnerabilities,
- * and lists all those vulnerabilities in the build log.
- * Can fail the build on a condition of minimum vulnerability severity.
+ * Downloads CLI, authenticates and runs it.
+ * Breaks build if failOnSeverity is other than "low", "medium" or "high"
  */
 @Mojo( name = "test")
 public class SnykTest extends AbstractMojo {
