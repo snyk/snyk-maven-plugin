@@ -5,18 +5,12 @@ import io.snyk.maven.plugins.cli.Runner;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
-import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.repository.RemoteRepository;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,23 +22,6 @@ import java.util.Map;
  */
 @Mojo( name = "test")
 public class SnykTest extends AbstractMojo {
-
-    @Parameter(property = "project", required = true, readonly = true)
-    private MavenProject project;
-
-    // The entry point to Aether, the component that's doing all the work
-    @Component
-    private RepositorySystem repoSystem;
-
-    // The current repository/network configuration of Maven.
-    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
-    private RepositorySystemSession repoSession;
-
-    @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
-    private List<RemoteRepository> remoteProjectRepositories;
-
-    @Parameter(defaultValue = "${project.remotePluginRepositories}", readonly = true)
-    private List<RemoteRepository> remotePluginRepositories;
 
     @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
