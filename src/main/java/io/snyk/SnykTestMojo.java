@@ -6,6 +6,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugin.logging.Log;
 
 import java.util.List;
 
@@ -24,8 +25,9 @@ public class SnykTestMojo extends AbstractMojo {
     private List<String> args;
 
     public void execute() throws MojoFailureException {
-//        System.out.println(System.getenv("SNYK_API_TOKEN"));
-        throw new MojoFailureException("hello world");
+        final Log log = getLog();
+        log.info("for known issues, no vulnerable paths found.");
+
         /*
             1. validate plugin options
                 - apiKey
