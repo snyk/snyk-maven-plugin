@@ -12,14 +12,14 @@ public class Runner {
         ProcessBuilder pb = new ProcessBuilder().command(command);
         Process process = pb.start();
 
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream())); // getInputStream() is for stdout
+        BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
         String line;
-        while ((line = stdInput.readLine()) != null) {
+        while ((line = stdoutReader.readLine()) != null) {
             log.info(line);
         }
-        while ((line = stdError.readLine()) != null) {
+        while ((line = stderrReader.readLine()) != null) {
             log.error(line);
         }
 
