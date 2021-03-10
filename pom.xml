@@ -60,6 +60,7 @@
     <version.maven.resources.plugin>3.2.0</version.maven.resources.plugin>
     <version.maven.source.plugin>3.2.1</version.maven.source.plugin>
     <version.maven.surefire.plugin>3.0.0-M5</version.maven.surefire.plugin>
+    <version.zt.exec>1.12</version.zt.exec>
   </properties>
 
   <dependencies>
@@ -92,6 +93,11 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.zeroturnaround</groupId>
+      <artifactId>zt-exec</artifactId>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -128,6 +134,11 @@
         <version>${version.junit.bom}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.zeroturnaround</groupId>
+        <artifactId>zt-exec</artifactId>
+        <version>1.12</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

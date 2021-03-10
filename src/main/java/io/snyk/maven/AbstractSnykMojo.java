@@ -108,6 +108,7 @@ abstract class AbstractSnykMojo extends AbstractMojo {
       }
     }
 
+    //TODO(pavel): pass snyk object with path to CLI, args etc, then mojos don't need to be configured.
     doExecute();
   }
 
