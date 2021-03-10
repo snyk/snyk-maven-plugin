@@ -27,6 +27,9 @@
           <cli>
             <executable>/usr/local/bin/snyk</executable>
           </cli>
+          <args>
+            <arg>--print-deps</arg>
+          </args>
           <apiToken>${env.SNYK_TEST_TOKEN}</apiToken>
         </configuration>
       </plugin>

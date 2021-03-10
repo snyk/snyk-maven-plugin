@@ -21,11 +21,14 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
     protected List<String> args;
 
     public void execute() throws MojoFailureException, MojoExecutionException {
+        getLog().info("args:");
+        getLog().info(args.toString());
+
         ProcessBuilder commandLine = CommandLine.asProcessBuilder(
             cli.getExecutable(),
             this.getCommand(),
             Optional.ofNullable(apiToken),
-            Collections.emptyList()
+            args
         );
 
         CommandRunner.run(commandLine::start, getLog());

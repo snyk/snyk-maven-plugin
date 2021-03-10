@@ -37,7 +37,8 @@ public class CommandLineTest {
             Command.TEST,
             Optional.empty(),
             asList(
-                "--some-option",
+                "--print-deps",
+                "--all-projects",
                 "--json-file-output=out.json"
             )
         );
@@ -46,7 +47,8 @@ public class CommandLineTest {
             asList(
                 "/path/to/cli",
                 "test",
-                "--some-option",
+                "--print-deps",
+                "--all-projects",
                 "--json-file-output=out.json"
             ),
             pb.command()
