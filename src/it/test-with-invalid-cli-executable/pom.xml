@@ -27,6 +27,7 @@
           <cli>
             <executable>/usr/local/bin/snyk-does-not-exist</executable>
           </cli>
+          <apiToken>${env.SNYK_TEST_TOKEN}</apiToken>
         </configuration>
       </plugin>
     </plugins>
