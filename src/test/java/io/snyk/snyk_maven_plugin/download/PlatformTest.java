@@ -8,24 +8,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PlatformTest {
 
     @Test
-    public void resolvesPlatformMacOs() {
+    public void shouldSupportMacOS() {
         assertEquals(Platform.MAC_OS, Platform.detect("mac os x"));
         assertEquals(Platform.MAC_OS, Platform.detect("darwin"));
     }
 
     @Test
-    public void resolvesPlatformLinux() {
+    public void shouldSupportLinux() {
         assertEquals(Platform.LINUX, Platform.detect("linux"));
     }
 
     @Test
-    public void resolvesPlatformWindows() {
+    public void shouldSupportWindows() {
         assertEquals(Platform.WINDOWS, Platform.detect("windows"));
     }
 
     @Test
-    public void throwsOnUnrecognizedPlatform() {
+    public void shouldNotSupportUnknownPlatforms() {
         assertThrows(IllegalArgumentException.class, () -> Platform.detect("nes64"));
+    }
+
+    @Test
+    public void shouldIgnoreLetterCasing() {
+        assertEquals(Platform.MAC_OS, Platform.detect("MaC Os X"));
     }
 
 }

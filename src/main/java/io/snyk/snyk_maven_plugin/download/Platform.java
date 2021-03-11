@@ -3,6 +3,7 @@ package io.snyk.snyk_maven_plugin.download;
 import com.google.common.annotations.VisibleForTesting;
 
 import java.nio.file.Paths;
+import java.util.Locale;
 
 public enum Platform {
     LINUX("snyk-linux"),
@@ -21,14 +22,15 @@ public enum Platform {
     }
 
     @VisibleForTesting
-    public static Platform detect(String arch) {
-        if (arch.contains("linux")) {
+    public static Platform detect(String osName) {
+        String osNameLower = osName.toLowerCase(Locale.ENGLISH);
+        if (osNameLower.contains("linux")) {
             return Paths.get("/etc/alpine-release").toFile().exists() ? LINUX_ALPINE : LINUX;
-        } else if (arch.contains("mac os x") || arch.contains("darwin") || arch.contains("osx")) {
+        } else if (osNameLower.contains("mac os x") || osNameLower.contains("darwin") || osNameLower.contains("osx")) {
             return MAC_OS;
-        } else if (arch.contains("windows")) {
+        } else if (osNameLower.contains("windows")) {
             return WINDOWS;
         }
-        throw new IllegalArgumentException(arch + " is not supported CPU type");
+        throw new IllegalArgumentException(osNameLower + " is not supported.");
     }
 }
