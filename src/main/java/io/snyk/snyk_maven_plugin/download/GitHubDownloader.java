@@ -1,4 +1,9 @@
-package io.snyk;
+package io.snyk.snyk_maven_plugin.download;
+
+import jodd.http.HttpRequest;
+import jodd.http.HttpResponse;
+import jodd.json.JsonObject;
+import jodd.json.JsonParser;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,11 +12,6 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
-
-import jodd.http.HttpRequest;
-import jodd.http.HttpResponse;
-import jodd.json.JsonObject;
-import jodd.json.JsonParser;
 
 import static java.lang.String.format;
 

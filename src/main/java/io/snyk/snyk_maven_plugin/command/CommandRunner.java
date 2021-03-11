@@ -1,4 +1,4 @@
-package io.snyk;
+package io.snyk.snyk_maven_plugin.command;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

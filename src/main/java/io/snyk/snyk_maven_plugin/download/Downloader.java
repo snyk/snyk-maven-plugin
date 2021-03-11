@@ -1,4 +1,4 @@
-package io.snyk;
+package io.snyk.snyk_maven_plugin.download;
 
 import java.io.IOException;
 import java.nio.file.Path;

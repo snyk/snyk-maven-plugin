@@ -1,4 +1,4 @@
-package io.snyk;
+package io.snyk.snyk_maven_plugin.command;
 
 import java.io.IOException;
 import java.util.ArrayList;

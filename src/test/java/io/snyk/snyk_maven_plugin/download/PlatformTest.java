@@ -1,8 +1,10 @@
-package io.snyk;
+package io.snyk.snyk_maven_plugin.download;
 
 import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 
 public class PlatformTest {
