@@ -2,7 +2,6 @@ package io.snyk.snyk_maven_plugin.download;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import javax.annotation.Nonnull;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Map;
@@ -19,14 +18,12 @@ public enum Platform {
         this.snykExecutableFileName = snykExecutableFileName;
     }
 
-    @Nonnull
     public static Platform current() {
         return detect(System.getProperties());
     }
 
-    @Nonnull
     @VisibleForTesting
-    public static Platform detect(@Nonnull Map<Object, Object> systemProperties) {
+    public static Platform detect(Map<Object, Object> systemProperties) {
         String arch = ((String) systemProperties.get("os.name")).toLowerCase(Locale.ENGLISH);
         if (arch.contains("linux")) {
             return Paths.get("/etc/alpine-release").toFile().exists() ? LINUX_ALPINE : LINUX;
