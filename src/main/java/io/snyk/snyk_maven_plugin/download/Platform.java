@@ -3,8 +3,6 @@ package io.snyk.snyk_maven_plugin.download;
 import com.google.common.annotations.VisibleForTesting;
 
 import java.nio.file.Paths;
-import java.util.Locale;
-import java.util.Map;
 
 public enum Platform {
     LINUX("snyk-linux"),
@@ -19,12 +17,11 @@ public enum Platform {
     }
 
     public static Platform current() {
-        return detect(System.getProperties());
+        return detect(System.getProperty("os.name"));
     }
 
     @VisibleForTesting
-    public static Platform detect(Map<Object, Object> systemProperties) {
-        String arch = ((String) systemProperties.get("os.name")).toLowerCase(Locale.ENGLISH);
+    public static Platform detect(String arch) {
         if (arch.contains("linux")) {
             return Paths.get("/etc/alpine-release").toFile().exists() ? LINUX_ALPINE : LINUX;
         } else if (arch.contains("mac os x") || arch.contains("darwin") || arch.contains("osx")) {
