@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.snyk.it</groupId>
-  <artifactId>test-without-dependency</artifactId>
+  <artifactId>test-with-invalid-cli-executable</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <build>

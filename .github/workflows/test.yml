@@ -1,12 +1,14 @@
 name: Build and Test
 
-on:
-  push:
-    branches: [ feat/new-maven, chore/ci-pipeline ]
+on: push
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # we care about other platforms and channels building
+      matrix:
+        os: [ubuntu, macos, windows]
+    runs-on: ${{ matrix.os }}-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -16,19 +18,32 @@ jobs:
         java-version: 8
 
     - name: Install Plugin to .m2
-      run: mvn -B install -DskipTests -Dinvoker.skip
+      run: mvn -B install "-DskipTests" "-Dinvoker.skip=true"
     
     - name: Run Unit Tests
       run: mvn -B surefire:test
     
-    - name: Install Snyk CLI
-      run: |
-        sudo npm install -g snyk
-    
-    - name: Run Acceptance Tests
+    - name: Install Snyk CLI (Ubuntu/macOS)
+      if: ${{ matrix.os != 'windows' }}
+      run: sudo npm install -g snyk
+
+    - name: Install Snyk CLI (Windows)
+      if: ${{ matrix.os == 'windows' }}
+      run: npm install -g snyk
+
+    - name: Run Acceptance Tests (Ubuntu/macOS)
+      if: ${{ matrix.os != 'windows' }}
       run: mvn -B invoker:install invoker:run
       env:
         SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
+        SNYK_CLI_EXECUTABLE: /usr/local/bin/snyk
+
+    - name: Run Acceptance Tests (Windows)
+      if: ${{ matrix.os == 'windows' }}
+      run: mvn -B invoker:install invoker:run
+      env:
+        SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
+        SNYK_CLI_EXECUTABLE: "C:\\npm\\prefix\\snyk.cmd"
 
     - name: Show Integration Test build.log files
       if: ${{ failure() }}
