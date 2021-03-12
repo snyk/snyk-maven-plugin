@@ -20,9 +20,10 @@ public class GitHubDownloader {
     private static final String SNYK_RELEASES_LATEST = "https://api.github.com/repos/snyk/snyk/releases/latest";
     private static final String SNYK_RELEASES_DOWNLOAD = "https://github.com/snyk/snyk/releases/download/%s/%s";
 
-    public static void download(Path destination, Platform platform) throws IOException {
+    public static File download(Path destination, Platform platform) throws IOException {
         URL url = getDownloadUrlForSnyk(platform);
-        File file = destination.toFile();
+        destination.toFile().mkdirs();
+        File file = destination.resolve(platform.snykExecutableFileName).toFile();
         try (
             ReadableByteChannel rbc = Channels.newChannel(url.openStream());
             FileOutputStream fos = new FileOutputStream(file);
@@ -30,6 +31,7 @@ public class GitHubDownloader {
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         }
         file.setExecutable(true);
+        return file;
     }
 
     private static URL getDownloadUrlForSnyk(Platform platform) throws MalformedURLException {
