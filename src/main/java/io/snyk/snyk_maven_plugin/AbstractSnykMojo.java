@@ -3,14 +3,18 @@ package io.snyk.snyk_maven_plugin;
 import io.snyk.snyk_maven_plugin.command.Command;
 import io.snyk.snyk_maven_plugin.command.CommandLine;
 import io.snyk.snyk_maven_plugin.command.CommandRunner;
-import io.snyk.snyk_maven_plugin.download.GitHubDownloader;
+import io.snyk.snyk_maven_plugin.download.ExecutableDownloader;
+import io.snyk.snyk_maven_plugin.download.Installer;
 import io.snyk.snyk_maven_plugin.download.Platform;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +32,7 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
 
     public void execute() throws MojoFailureException, MojoExecutionException {
         ProcessBuilder commandLine = CommandLine.asProcessBuilder(
-            this.getExecutable(),
+            this.getExecutable().getAbsolutePath(),
             this.getCommand(),
             Optional.ofNullable(apiToken),
             args
@@ -37,17 +41,18 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
         CommandRunner.run(commandLine::start, getLog());
     }
 
-    private String getExecutable() throws MojoExecutionException {
+    private File getExecutable() throws MojoExecutionException {
         try {
             return Optional.ofNullable(cli)
                 .map(CLI::getExecutable)
                 .orElseGet(() -> {
                     try {
-                        GitHubDownloader.download(Paths.get("/tmp/snyk-maven-plugin"), Platform.current());
+                        Platform platform = Platform.current();
+                        Path targetFolder = Installer.getInstallLocation(platform, Optional.ofNullable(System.getProperty("user.home")).map(Paths::get), System.getenv());
+                        return ExecutableDownloader.download(targetFolder, Platform.current());
                     } catch (IOException e) {
                         throw new RuntimeException("failed to download executable", e);
                     }
-                    return "/tmp/snyk-maven-plugin";
                 });
         } catch (RuntimeException e) {
             throw new MojoExecutionException("failed to get executable", e);
@@ -59,9 +64,9 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
     public static class CLI {
 
         @Parameter(property = "executable")
-        private String executable;
+        private File executable;
 
-        public String getExecutable() {
+        public File getExecutable() {
             return executable;
         }
 

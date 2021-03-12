@@ -23,7 +23,7 @@
         </executions>
         <configuration>
           <cli>
-            <executable>/usr/local/bin/snyk</executable>
+            <executable>${env.SNYK_CLI_EXECUTABLE}</executable>
           </cli>
           <apiToken>${env.SNYK_TEST_TOKEN}</apiToken>
         </configuration>
