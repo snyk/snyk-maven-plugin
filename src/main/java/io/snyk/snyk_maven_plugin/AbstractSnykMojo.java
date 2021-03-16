@@ -3,6 +3,7 @@ package io.snyk.snyk_maven_plugin;
 import io.snyk.snyk_maven_plugin.command.Command;
 import io.snyk.snyk_maven_plugin.command.CommandLine;
 import io.snyk.snyk_maven_plugin.command.CommandRunner;
+import io.snyk.snyk_maven_plugin.download.CLIVersions;
 import io.snyk.snyk_maven_plugin.download.ExecutableDownloader;
 import io.snyk.snyk_maven_plugin.download.Installer;
 import io.snyk.snyk_maven_plugin.download.Platform;
@@ -18,6 +19,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class AbstractSnykMojo extends AbstractMojo {
 
@@ -47,10 +50,12 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
                 .map(CLI::getExecutable)
                 .orElseGet(() -> {
                     try {
+                        String versionToDownload = Optional.ofNullable(cli)
+                                .map(CLI::getVersion).orElse(CLIVersions.LATEST_VERSION_KEYWORD);
                         Platform platform = Platform.current();
                         Path targetFolder = Installer.getInstallLocation(platform, Optional.ofNullable(System.getProperty("user.home")).map(Paths::get), System.getenv());
-                        return ExecutableDownloader.download(targetFolder, Platform.current());
-                    } catch (IOException e) {
+                        return ExecutableDownloader.download(targetFolder, Platform.current(), versionToDownload);
+                    } catch (IOException | MojoExecutionException e) {
                         throw new RuntimeException("failed to download executable", e);
                     }
                 });
@@ -66,8 +71,15 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
         @Parameter(property = "executable")
         private File executable;
 
+        @Parameter(property = "version")
+        private String version;
+
         public File getExecutable() {
             return executable;
+        }
+
+        public String getVersion() {
+            return version;
         }
 
     }
