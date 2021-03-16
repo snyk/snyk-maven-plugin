@@ -2,27 +2,27 @@
 
 ![Travis](https://img.shields.io/travis/snyk/snyk-maven-plugin.svg)
 
-![Snyk Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/snyk/snyk-maven-plugin.svg)
+![Snyk Maven Plugin Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/snyk/snyk-maven-plugin.svg)
 
-***
+---
 
-Snyk helps you find, fix and monitor for known vulnerabilities in Node.js npm, Ruby and Java dependencies, both on an ad hoc basis and as part of your CI (Build) system.
+# Snyk Maven Plugin
 
-The Snyk Maven plugin tests and monitors your Maven dependencies.
+Official [Snyk](https://snyk.io) Maven plugin tests and monitors your Maven dependencies.
 
 ## Installation
 
-1. If you haven't done so already, head on to the [Snyk website](https://snyk.io), register and get your API token. It will be presented in your [Snyk account page](https://snyk.io/account/).
+1. [Get Snyk API token](https://snyk.co/ucT6J).
 
 2. In your pom.xml file, add the Snyk Maven plugin:
 
-```
+```xml
 <build>
     <plugins>
         <plugin>
             <groupId>io.snyk</groupId>
             <artifactId>snyk-maven-plugin</artifactId>
-            <version>1.2.9</version>
+            <version>2.0.0</version>
             <executions>
                 <execution>
                     <id>snyk-test</id>
@@ -40,31 +40,55 @@ The Snyk Maven plugin tests and monitors your Maven dependencies.
                 </execution>
             </executions>
             <configuration>
-                <apiToken>${SNYK_API_TOKEN}</apiToken>
-                <failOnSeverity>medium</failOnSeverity>
-                <org></org>
+                <apiToken>${env.SNYK_TOKEN}</apiToken>
             </configuration>
         </plugin>
     </plugins>
 </build>
 ```
 
-3. As seen in the snippet above, Snyk recommends to set the **test** goal in the **test** phase of Maven; and the **monitor** goal in the **install** phase of Maven.
-
-## Supported Maven versions
-
-This plugin is supported by Maven version 3.1.0 and above.
+3. We recommend to set the **test** goal in the **test** phase of Maven; and the **monitor** goal in the **install** phase of Maven.
 
 ## Configuration
 
 The following are elements in the `<configuration></configuration>` section of the plugin:
 
-- **apiToken** (mandatory): The **apiToken** is used to authenticate with the Snyk services. With the API token, the plugin can be configured with it as a system property or environment variable. The token can also be manually added to the pom.xml, although this is not the recommended method. This is mandatory configuration.
-- **failOnAuthError** (optional): Setting **failOnAuthError** to true will fail the build if authentication fails. Default value is `false`
-- **failOnSeverity** (optional): Setting **failOnSeverity** to any of the values (`low`, `medium` or `high`) will fail the Maven build if a severity is found at or above what was configured. This configuration is optional, and will be set to `low` if not defined. Setting it to `false` will never fail the build.
-- **org** (optional): The **org** configuration element sets under which of your Snyk organisations the project will be recorded. Leaving out this configuration will record the project under your default organisation.
-- **includeProvidedDependencies** (optional): The **includeProvidedDependencies** configuration element allows to include dependencies with `provided` scope. Default value is `true`.
+- **apiToken**: used to authenticate with the Snyk services. Snyk API token must be available either 1) in the pom.xml 2) in an environment as `SNYK_TOKEN` 3) in user storage after independently running CLI's `snyk auth` command.
 - **skip** (optional): The **skip** configuration element allows to skip plugin's execution when setting it to `true`. Default value is `false`.
+
+### Configuring Snyk CLI in Maven plugin
+
+Snyk Maven plugin is using [Snyk CLI](https://github.com/snyk/snyk) to scan your projects. This means that you may pass CLI flags with the `<args>`. [Snyk CLI reference with list of flags and arguments](https://support.snyk.io/hc/en-us/articles/360003812578-CLI-reference)
+
+Example configuration:
+
+```xml
+<configuration>
+    <apiToken>${env.SNYK_TOKEN}</apiToken>
+    <args>
+        <arg>--severity-threshold=critical</arg>
+        <arg>--scan-all-unmanaged</arg>
+        <arg>--json</arg>
+    </args>
+</configuration>
+```
+
+There are also additional `<cli>` configurations available:
+
+- **executable** (optional): path to the Snyk CLI executable that should be used. If not provided, plugin will download the CLI from Snyk.io
+- **version** (optional): specify a version of CLI to use. For example: `<version>1.489.0</version>`. If not provided, plugin will download the latest version
+- **updatePolicy** (optional): you may specify update policy to fetch the CLI. Allowed values: `daily`, `never` or `interval:$HOURS`. Defaults to the recommended `daily` checks.
+- **downloadUrl** (optional): specify an URL from which to download the CLI. For example: `<downloadUrl>https://snyk-cli-mirror.local/cli/</downloadUrl>`. It should follow the same format as Snyk's download URL: `$downloadUrl/$CLI_VERSION/$CLI_FILE`. Where `$CLI_VERSION` is `latest` or a version (see the `<version>` above) and `$CLI_FILE` is one of the OS-specific filenames: `snyk-linux`, `snyk-macos`, `snyk-alpine` or `snyk-win.exe`.
+
+
+```xml
+<configuration>
+    <apiToken>${env.SNYK_TOKEN}</apiToken>
+    <cli>
+        <executable>~/.local/share/snyk/snyk-linux</executable>
+    </cli>
+</configuration>
+```
 
 ## Features
 
@@ -72,11 +96,18 @@ The following are elements in the `<configuration></configuration>` section of t
 - The **monitor** goal records the state of dependencies and any vulnerabilities on snyk.io so you can be alerted when new vulnerabilities or updates/patches are disclosed that affect your repositories.
 - Running `mvn snyk:test` or `mvn snyk:monitor` will run the desired goals (either **test** or **monitor**) outside the Maven build lifecycle.
 
+## Supported Maven versions
 
-## Development setup
+This plugin is supported by Maven version 3.1.0 and above.
+
+## Local development setup
+
 `export SNYK_API_TOKEN="*********-****-****-****-****"`
-`export SNYK_API_ENDPOINT="https://snyk.io/"`
-## Get maven
+
+### Get maven
+
 `brew install maven`
+
 ### Running the build & tests
+
 `mvn clean install -Prun-its`
