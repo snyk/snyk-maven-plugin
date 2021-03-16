@@ -1,6 +1,9 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
     <option name="LINE_SEPARATOR" value="&#10;" />
+    <Properties>
+      <option name="SPACES_AROUND_KEY_VALUE_DELIMITER" value="true" />
+    </Properties>
     <codeStyleSettings language="JAVA">
       <option name="RIGHT_MARGIN" value="120" />
       <option name="ALIGN_THROWS_KEYWORD" value="true" />
