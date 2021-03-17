@@ -12,6 +12,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -43,7 +44,8 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
                 getExecutable().getAbsolutePath(),
                 getCommand(),
                 Optional.ofNullable(apiToken),
-                args
+                args,
+                MessageUtils.isColorEnabled()
             );
             Log log = getLog();
             return CommandRunner.run(commandLine::start, log::info, log::error);
