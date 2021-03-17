@@ -4,14 +4,16 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static io.snyk.snyk_maven_plugin.command.CommandLine.INTEGRATION_NAME;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CommandLineTest {
 
     @Test
-    public void shouldIncludePathAndCommandName() {
+    public void shouldIncludePathCommandNameIntegrationName() {
         ProcessBuilder pb = CommandLine.asProcessBuilder(
             "/path/to/cli",
             Command.TEST,
@@ -23,22 +25,23 @@ public class CommandLineTest {
         assertEquals(
             asList(
                 "/path/to/cli",
-                "test"
+                "test",
+                "--integration-name=" + INTEGRATION_NAME
             ),
             pb.command()
         );
     }
 
     @Test
-    public void shouldIncludeArguments() {
+    public void shouldIncludeTrimmedArguments() {
         ProcessBuilder pb = CommandLine.asProcessBuilder(
             "/path/to/cli",
             Command.TEST,
             Optional.empty(),
             asList(
                 "--print-deps",
-                "--all-projects",
-                "--json-file-output=out.json"
+                "  --all-projects  ",
+                "--json-file-output=out.json  "
             ),
             false
         );
@@ -47,9 +50,30 @@ public class CommandLineTest {
             asList(
                 "/path/to/cli",
                 "test",
+                "--integration-name=" + INTEGRATION_NAME,
                 "--print-deps",
                 "--all-projects",
                 "--json-file-output=out.json"
+            ),
+            pb.command()
+        );
+    }
+
+    @Test
+    public void shouldNotChangeIntegrationName() {
+        ProcessBuilder pb = CommandLine.asProcessBuilder(
+            "/path/to/cli",
+            Command.TEST,
+            Optional.empty(),
+            singletonList("--integration-name=this-is-not-ok"),
+            false
+        );
+
+        assertEquals(
+            asList(
+                "/path/to/cli",
+                "test",
+                "--integration-name=" + INTEGRATION_NAME
             ),
             pb.command()
         );
