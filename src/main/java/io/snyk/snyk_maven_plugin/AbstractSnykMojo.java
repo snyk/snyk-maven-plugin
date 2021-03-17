@@ -14,13 +14,10 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class AbstractSnykMojo extends AbstractMojo {
 
@@ -34,34 +31,44 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
     protected List<String> args;
 
     public void execute() throws MojoFailureException, MojoExecutionException {
-        ProcessBuilder commandLine = CommandLine.asProcessBuilder(
-            this.getExecutable().getAbsolutePath(),
-            this.getCommand(),
-            Optional.ofNullable(apiToken),
-            args
-        );
-
-        CommandRunner.run(commandLine::start, getLog());
+        int exitCode = executeCommand();
+        if (exitCode != 0) {
+            throw new MojoFailureException("snyk command exited with non-zero exit code (" + exitCode + "). See output for details.");
+        }
     }
 
-    private File getExecutable() throws MojoExecutionException {
+    public int executeCommand() throws MojoExecutionException {
         try {
-            return Optional.ofNullable(cli)
-                .map(CLI::getExecutable)
-                .orElseGet(() -> {
-                    try {
-                        String versionToDownload = Optional.ofNullable(cli)
-                                .map(CLI::getVersion).orElse(CLIVersions.LATEST_VERSION_KEYWORD);
-                        Platform platform = Platform.current();
-                        Path targetFolder = Installer.getInstallLocation(platform, Optional.ofNullable(System.getProperty("user.home")).map(Paths::get), System.getenv());
-                        return ExecutableDownloader.download(targetFolder, Platform.current(), versionToDownload);
-                    } catch (IOException | MojoExecutionException e) {
-                        throw new RuntimeException("failed to download executable", e);
-                    }
-                });
-        } catch (RuntimeException e) {
-            throw new MojoExecutionException("failed to get executable", e);
+            ProcessBuilder commandLine = CommandLine.asProcessBuilder(
+                getExecutable().getAbsolutePath(),
+                getCommand(),
+                Optional.ofNullable(apiToken),
+                args
+            );
+            Log log = getLog();
+            return CommandRunner.run(commandLine::start, log::info, log::error);
+        } catch (Exception e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
+    }
+
+    private File getExecutable() {
+        return Optional.ofNullable(cli)
+            .map(CLI::getExecutable)
+            .orElseGet(this::downloadExecutable);
+    }
+
+    private File downloadExecutable() {
+        Platform platform = Platform.current();
+        String version = Optional.ofNullable(cli)
+            .map(CLI::getVersion)
+            .orElse(CLIVersions.LATEST_VERSION_KEYWORD);
+        Path destination = Installer.getInstallLocation(
+            platform,
+            Optional.ofNullable(System.getProperty("user.home")).map(Paths::get),
+            System.getenv()
+        );
+        return ExecutableDownloader.download(destination, platform, version);
     }
 
     public abstract Command getCommand();
@@ -83,4 +90,5 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
         }
 
     }
+
 }
