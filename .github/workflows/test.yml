@@ -17,7 +17,16 @@ jobs:
         with:
           java-version: 8
 
-      - name: Install Plugin to .m2
+      - name: Cache Local Maven Repository
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.m2/wrapper
+          key: ${{ runner.os }}-maven-${{ hashFiles('pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Install Plugin to Local Maven Repository
         run: mvn -B install "-DskipTests" "-Dinvoker.skip=true"
 
       - name: Run Unit Tests
