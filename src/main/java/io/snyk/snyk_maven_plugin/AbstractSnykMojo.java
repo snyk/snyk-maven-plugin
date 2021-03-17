@@ -33,7 +33,15 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
     @Parameter
     protected List<String> args;
 
+    @Parameter(property = "snyk.skip")
+    protected boolean skip;
+
     public void execute() throws MojoFailureException, MojoExecutionException {
+        if (skip) {
+            getLog().info("snyk " + getCommand().commandName() + " skipped");
+            return;
+        }
+
         int exitCode = executeCommand();
         if (exitCode != 0) {
             throw new MojoFailureException("snyk command exited with non-zero exit code (" + exitCode + "). See output for details.");
