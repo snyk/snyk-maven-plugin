@@ -41,6 +41,9 @@ Official [Snyk](https://snyk.io) Maven plugin tests and monitors your Maven depe
             </executions>
             <configuration>
                 <apiToken>${env.SNYK_TOKEN}</apiToken>
+                <args>
+                    <arg>--all-projects</arg>
+                </args>
             </configuration>
         </plugin>
     </plugins>
@@ -80,7 +83,6 @@ There are also additional `<cli>` configurations available:
 - **updatePolicy** (optional): you may specify update policy to fetch the CLI. Allowed values: `daily`, `never` or `interval:$HOURS`. Defaults to the recommended `daily` checks.
 - **downloadUrl** (optional): specify an URL from which to download the CLI. For example: `<downloadUrl>https://snyk-cli-mirror.local/cli/</downloadUrl>`. It should follow the same format as Snyk's download URL: `$downloadUrl/$CLI_VERSION/$CLI_FILE`. Where `$CLI_VERSION` is `latest` or a version (see the `<version>` above) and `$CLI_FILE` is one of the OS-specific filenames: `snyk-linux`, `snyk-macos`, `snyk-alpine` or `snyk-win.exe`.
 
-
 ```xml
 <configuration>
     <apiToken>${env.SNYK_TOKEN}</apiToken>
@@ -95,6 +97,17 @@ There are also additional `<cli>` configurations available:
 - The **test** goal presents a list of vulnerabilities in your project's dependencies, in either a developer's machine or in your CI process.
 - The **monitor** goal records the state of dependencies and any vulnerabilities on snyk.io so you can be alerted when new vulnerabilities or updates/patches are disclosed that affect your repositories.
 - Running `mvn snyk:test` or `mvn snyk:monitor` will run the desired goals (either **test** or **monitor**) outside the Maven build lifecycle.
+
+## Migrating from Snyk Maven Plugin v1
+
+All plugin options from v1 were moved to the `<args>` object, to keep them in line with the CLI usage. See the mapping:
+
+- `org` => `<arg>--org=my-org-name</arg>`
+- `failOnSeverity` => `<arg>--severity-threshold=low|medium|high</arg>`
+- `failOnAuthError` => Not implemented
+- `includeProvidedDependencies` => Not implemented
+
+Also checkoout the [Snyk CLI reference with list of flags and arguments](https://support.snyk.io/hc/en-us/articles/360003812578-CLI-reference).
 
 ## Supported Maven versions
 
