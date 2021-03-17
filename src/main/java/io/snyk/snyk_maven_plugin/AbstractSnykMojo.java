@@ -19,15 +19,17 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
+
 public abstract class AbstractSnykMojo extends AbstractMojo {
 
-    @Parameter(property = "apiToken")
+    @Parameter
     protected String apiToken;
 
-    @Parameter(property = "cli")
+    @Parameter
     protected CLI cli;
 
-    @Parameter(property = "args")
+    @Parameter
     protected List<String> args;
 
     public void execute() throws MojoFailureException, MojoExecutionException {
@@ -43,7 +45,7 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
                 getExecutable().getAbsolutePath(),
                 getCommand(),
                 Optional.ofNullable(apiToken),
-                args
+                Optional.ofNullable(args).orElse(emptyList())
             );
             Log log = getLog();
             return CommandRunner.run(commandLine::start, log::info, log::error);
@@ -75,10 +77,10 @@ public abstract class AbstractSnykMojo extends AbstractMojo {
 
     public static class CLI {
 
-        @Parameter(property = "executable")
+        @Parameter
         private File executable;
 
-        @Parameter(property = "version")
+        @Parameter
         private String version;
 
         public File getExecutable() {
