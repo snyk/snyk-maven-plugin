@@ -7,40 +7,37 @@ import java.util.Optional;
 
 public class Installer {
 
-    public static Path getInstallLocation(Platform platform, Optional<Path> homeDirectory, Map<String, String> env) throws MissingContextException {
-        Path p;
-        if (platform == Platform.MAC_OS) {
-            if (homeDirectory.isPresent()) {
-                p = homeDirectory.get().resolve("Library/Application Support/Snyk");
-            } else {
-                throw new MissingContextException("homeDirectory is empty but must be set");
+    public static Path getInstallLocation(Platform platform, Optional<Path> homeDirectory, Map<String, String> env)
+    throws MissingContextException {
+        switch (platform) {
+            case MAC_OS: {
+                return homeDirectory
+                    .map(home -> home.resolve("Library/Application Support/Snyk"))
+                    .orElseThrow(() -> new MissingContextException("macOS needs a home directory."));
             }
-        } else if (platform == Platform.WINDOWS) {
-            if (env.containsKey("APPDATA")) {
-                p = Paths.get(env.getOrDefault("APPDATA", "")).resolve("Snyk");
-            } else {
-                throw new MissingContextException("APPDATA env var not set");
+            case WINDOWS: {
+                return Optional.ofNullable(env.get("APPDATA"))
+                    .map(Paths::get)
+                    .map(appData -> appData.resolve("Snyk"))
+                    .orElseThrow(() -> new MissingContextException("Windows needs APPDATA directory."));
             }
-        } else if (platform == Platform.LINUX || platform == Platform.LINUX_ALPINE) {
-            Optional<String> maybeXgdDataHome = Optional.ofNullable(env.get("XDG_DATA_HOME"));
-            if (maybeXgdDataHome.isPresent()) {
-                p = Paths.get(maybeXgdDataHome.get()).resolve("snyk");
-            } else {
-                if (homeDirectory.isPresent()) {
-                    p = homeDirectory.get().resolve(".local/share/snyk");
-                } else {
-                    throw new MissingContextException("homeDirectory is empty but must be set");
-                }
+            case LINUX:
+            case LINUX_ALPINE: {
+                return Optional.ofNullable(env.get("XDG_DATA_HOME"))
+                    .map(Paths::get)
+                    .map(xdgHome -> xdgHome.resolve("snyk"))
+                    .map(Optional::of)
+                    .orElseGet(() -> homeDirectory.map(home -> home.resolve(".local/share/snyk")))
+                    .orElseThrow(() -> new MissingContextException("Linux needs XDG_DATA_HOME or home directory."));
             }
-        } else {
-            throw new IllegalStateException("all possible cases accounted for");
+            default: {
+                throw new MissingContextException("Unsupported platform (" + platform + ").");
+            }
         }
-
-        return p;
     }
 
     public static class MissingContextException extends RuntimeException {
-        public  MissingContextException(String message) {
+        public MissingContextException(String message) {
             super(message);
         }
     }
