@@ -14,7 +14,7 @@
   <url>https://snyk.io</url>
 
   <prerequisites>
-    <maven>${maven.version}</maven>
+    <maven>3.1.0</maven>
   </prerequisites>
 
   <properties>
