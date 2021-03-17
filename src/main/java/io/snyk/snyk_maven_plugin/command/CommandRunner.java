@@ -1,9 +1,5 @@
 package io.snyk.snyk_maven_plugin.command;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,19 +7,15 @@ import java.io.InputStreamReader;
 
 public class CommandRunner {
 
-    public static void run(CommandLine commandLine, Log log) throws MojoFailureException, MojoExecutionException {
+    public static int run(CommandLine commandLine, LineLogger infoLogger, LineLogger errorLogger) {
         try {
             Process process = commandLine.start();
-            logStream(process.getInputStream(), log::info); // process stdout goes to plugin input
-            logStream(process.getErrorStream(), log::error);
+            logStream(process.getInputStream(), infoLogger); // process stdout goes to plugin input
+            logStream(process.getErrorStream(), errorLogger);
             process.waitFor();
-
-            int exitStatus = process.exitValue();
-            if (exitStatus != 0) {
-                throw new MojoFailureException("command existed with non-zero exit code (" + exitStatus + ")");
-            }
+            return process.exitValue();
         } catch (IOException | InterruptedException e) {
-            throw new MojoExecutionException("command execution failed", e);
+            throw new RuntimeException("command execution failed", e);
         }
     }
 

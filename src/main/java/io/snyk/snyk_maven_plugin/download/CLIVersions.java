@@ -1,7 +1,5 @@
 package io.snyk.snyk_maven_plugin.download;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +14,9 @@ public class CLIVersions {
         return versionMatcher.matches();
     }
 
-    public static String sanitize(String version) throws MojoExecutionException {
+    public static String sanitize(String version) {
         if (!isValidCLIVersion(version)) {
-            throw new MojoExecutionException("Invalid Snyk CLI version. It should be a valid semver e.g. 1.489.0");
+            throw new IllegalArgumentException("Invalid Snyk CLI version. It should be a valid semver e.g. 1.489.0");
         }
 
         // Add "v" prefix e.g. v1.456.0 if needed
