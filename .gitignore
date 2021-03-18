@@ -23,10 +23,9 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/timing.properties
-
-# Exclude maven wrapper
-!/.mvn/wrapper/maven-wrapper.jar
+.mvn
+mvnw
+mvnw.cmd
 
 **/.idea
 **/out/
