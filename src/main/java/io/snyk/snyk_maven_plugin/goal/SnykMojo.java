@@ -1,10 +1,7 @@
 package io.snyk.snyk_maven_plugin.goal;
 
 import io.snyk.snyk_maven_plugin.command.Command;
-import io.snyk.snyk_maven_plugin.download.CLIVersions;
-import io.snyk.snyk_maven_plugin.download.ExecutableDestination;
-import io.snyk.snyk_maven_plugin.download.ExecutableDownloader;
-import io.snyk.snyk_maven_plugin.download.Platform;
+import io.snyk.snyk_maven_plugin.download.*;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.utils.logging.MessageUtils;
 
@@ -39,6 +36,9 @@ public abstract class SnykMojo extends ComposedMojo {
 
         @Parameter
         private String version;
+
+        @Parameter
+        private String updatePolicy;
 
     }
 
@@ -97,6 +97,12 @@ public abstract class SnykMojo extends ComposedMojo {
         return ExecutableDownloader.getDownloadUrl(platform, getDownloadVersion());
     }
 
+    public String getUpdatePolicy() {
+        return Optional.ofNullable(cli)
+            .map(cli -> cli.updatePolicy)
+            .orElse(UpdatePolicy.DAILY);
+    }
+    
     @Override
     public MojoExecutor getExecutor() {
         return executor;
