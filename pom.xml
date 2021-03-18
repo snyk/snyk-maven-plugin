@@ -14,14 +14,13 @@
   <url>https://snyk.io</url>
 
   <prerequisites>
-    <maven>3.1.0</maven>
+    <maven>3.2.5</maven>
   </prerequisites>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
     <project.sourceCompatibility>1.8</project.sourceCompatibility>
     <project.targetCompatibility>1.8</project.targetCompatibility>
     <maven.version>3.6.3</maven.version>
@@ -184,6 +183,8 @@
             <SNYK_TOKEN><!-- disable global environment auth for tests --></SNYK_TOKEN>
           </environmentVariables>
           <parallelThreads>0.5C</parallelThreads>
+          <showVersion>true</showVersion>
+          <mavenExecutable>${project.basedir}/mvnw</mavenExecutable>
         </configuration>
         <executions>
           <execution>

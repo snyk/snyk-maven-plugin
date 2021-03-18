@@ -8,6 +8,7 @@ jobs:
       fail-fast: false  # we care about other platforms and channels building
       matrix:
         os: [ ubuntu, macos, windows ]
+        maven_version: [ 3.2.5, 3.6.3 ]
     runs-on: ${{ matrix.os }}-latest
 
     steps:
@@ -26,7 +27,12 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
 
-      - name: Install Plugin to Local Maven Repository
+      - name: Install Maven for Acceptance Tests
+        run: |
+          mvn -N "io.takari:maven:0.7.7:wrapper" "-Dmaven=${{matrix.maven_version}}"
+          ./mvnw --version
+
+      - name: Install Plugin to .m2
         run: mvn -B install "-DskipTests" "-Dinvoker.skip=true"
 
       - name: Run Unit Tests
