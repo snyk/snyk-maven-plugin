@@ -13,13 +13,18 @@ public interface CommandLine {
         String cliExecutablePath,
         Command command,
         Optional<String> apiToken,
-        List<String> args
+        List<String> args,
+        boolean color
     ) {
         ProcessBuilder pb = new ProcessBuilder(new ArrayList<String>() {{
             add(cliExecutablePath);
             add(command.commandName());
             addAll(args);
         }});
+
+        if (color) {
+            pb.environment().put("FORCE_COLOR", "true");
+        }
 
         apiToken.ifPresent((t) -> {
             pb.environment().put("SNYK_TOKEN", t);

@@ -10,15 +10,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CommandLineTest {
 
-    public static final String SNYK_TOKEN_FROM_POM_XML = "snyk-token-from-pom-xml";
-
     @Test
     public void shouldIncludePathAndCommandName() {
         ProcessBuilder pb = CommandLine.asProcessBuilder(
             "/path/to/cli",
             Command.TEST,
             Optional.empty(),
-            emptyList()
+            emptyList(),
+            false
         );
 
         assertEquals(
@@ -40,7 +39,8 @@ public class CommandLineTest {
                 "--print-deps",
                 "--all-projects",
                 "--json-file-output=out.json"
-            )
+            ),
+            false
         );
 
         assertEquals(
@@ -56,12 +56,28 @@ public class CommandLineTest {
     }
 
     @Test
+    public void shouldNotModifyEnvironmentByDefault() {
+        ProcessBuilder pb = CommandLine.asProcessBuilder(
+            "/path/to/cli",
+            Command.TEST,
+            Optional.empty(),
+            emptyList(),
+            false
+        );
+        assertEquals(
+            System.getenv(),
+            pb.environment()
+        );
+    }
+
+    @Test
     public void shouldIncludeAPIToken() {
         ProcessBuilder pb = CommandLine.asProcessBuilder(
             "/path/to/cli",
             Command.TEST,
             Optional.of("fake-token"),
-            emptyList()
+            emptyList(),
+            false
         );
 
         assertEquals(
@@ -71,16 +87,18 @@ public class CommandLineTest {
     }
 
     @Test
-    public void shouldNotIncludeAPITokenWhenNotGiven() {
+    public void shouldForceColorWhenEnabled() {
         ProcessBuilder pb = CommandLine.asProcessBuilder(
             "/path/to/cli",
             Command.TEST,
             Optional.empty(),
-            emptyList()
+            emptyList(),
+            true
         );
         assertEquals(
-            SNYK_TOKEN_FROM_POM_XML,
-            pb.environment().get("SNYK_TOKEN")
+            "true",
+            pb.environment().get("FORCE_COLOR")
         );
     }
+
 }
