@@ -183,6 +183,7 @@
           <environmentVariables>
             <SNYK_TOKEN><!-- disable global environment auth for tests --></SNYK_TOKEN>
           </environmentVariables>
+          <parallelThreads>0.5C</parallelThreads>
         </configuration>
         <executions>
           <execution>
