@@ -3,7 +3,6 @@ package io.snyk.snyk_maven_plugin.goal;
 import io.snyk.snyk_maven_plugin.command.CommandLine;
 import io.snyk.snyk_maven_plugin.command.CommandRunner;
 import io.snyk.snyk_maven_plugin.download.ExecutableDownloader;
-import io.snyk.snyk_maven_plugin.download.Platform;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -48,10 +47,9 @@ public class SnykMojoExecutor implements MojoExecutor {
     }
 
     private File downloadExecutable() {
-        Platform platform = mojo.getPlatform();
-        String version = mojo.getDownloadVersion();
-        File destination = mojo.getDownloadDestination();
-        ExecutableDownloader.download(destination, platform, version);
-        return destination;
+        return ExecutableDownloader.download(
+            mojo.getDownloadUrl(),
+            mojo.getDownloadDestination()
+        );
     }
 }

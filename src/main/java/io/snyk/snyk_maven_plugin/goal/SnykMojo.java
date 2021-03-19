@@ -2,12 +2,14 @@ package io.snyk.snyk_maven_plugin.goal;
 
 import io.snyk.snyk_maven_plugin.command.Command;
 import io.snyk.snyk_maven_plugin.download.CLIVersions;
+import io.snyk.snyk_maven_plugin.download.ExecutableDownloader;
 import io.snyk.snyk_maven_plugin.download.Installer;
 import io.snyk.snyk_maven_plugin.download.Platform;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.utils.logging.MessageUtils;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -83,16 +85,16 @@ public abstract class SnykMojo extends ComposedMojo {
         return skip;
     }
 
-    public Platform getPlatform() {
-        return platform;
-    }
-
     public boolean supportsColor() {
         return color;
     }
 
     public File getDownloadDestination() {
         return downloadDestination;
+    }
+
+    public URL getDownloadUrl() {
+        return ExecutableDownloader.getDownloadUrl(platform, getDownloadVersion());
     }
 
     @Override
