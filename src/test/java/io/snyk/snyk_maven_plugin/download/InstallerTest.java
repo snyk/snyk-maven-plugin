@@ -2,6 +2,7 @@ package io.snyk.snyk_maven_plugin.download;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -18,17 +19,21 @@ public class InstallerTest {
         Platform platform = Platform.WINDOWS;
         Map<String, String> env = new HashMap<>();
         env.put("APPDATA", "c:\\users\\foo\\appdata");
-        Path destinationDirectory = Installer.getInstallLocation(platform, Optional.empty(), env);
+        File destination = Installer.getDownloadDestination(platform, Optional.empty(), env);
         assertEquals(
-                destinationDirectory.toString().replace('/', '\\'),  // replace so that this test works on Mac/Linux
-                "c:\\users\\foo\\appdata\\Snyk");
+            toWindowsPath(destination),
+            "c:\\users\\foo\\appdata\\Snyk\\snyk-win.exe"
+        );
     }
 
     @Test
     public void windowsThrowsIfAppDataNotSet() {
         Platform platform = Platform.WINDOWS;
         Map<String, String> env = new HashMap<>(); // no APPDATA
-        assertThrows(Installer.MissingContextException.class, () -> Installer.getInstallLocation(platform, Optional.empty(), env));
+        assertThrows(
+            Installer.MissingContextException.class,
+            () -> Installer.getDownloadDestination(platform, Optional.empty(), env)
+        );
     }
 
     @Test
@@ -36,10 +41,11 @@ public class InstallerTest {
         Platform platform = Platform.MAC_OS;
         Optional<Path> maybeHomeDir = Optional.of(Paths.get("/Users/foo"));
         Map<String, String> env = new HashMap<>();
-        Path destinationDirectory = Installer.getInstallLocation(platform, maybeHomeDir, env);
+        File destination = Installer.getDownloadDestination(platform, maybeHomeDir, env);
         assertEquals(
-                destinationDirectory.toString().replace('\\', '/'), // replace so that this test works on Windows
-                "/Users/foo/Library/Application Support/Snyk");
+            toUnixPath(destination),
+            "/Users/foo/Library/Application Support/Snyk/snyk-macos"
+        );
     }
 
     @Test
@@ -47,7 +53,10 @@ public class InstallerTest {
         Platform platform = Platform.MAC_OS;
         Optional<Path> missingHomeDir = Optional.empty(); // can't get home directory
         Map<String, String> env = new HashMap<>();
-        assertThrows(Installer.MissingContextException.class, () -> Installer.getInstallLocation(platform, missingHomeDir, env));
+        assertThrows(
+            Installer.MissingContextException.class,
+            () -> Installer.getDownloadDestination(platform, missingHomeDir, env)
+        );
     }
 
     @Test
@@ -55,10 +64,11 @@ public class InstallerTest {
         Platform platform = Platform.LINUX;
         Map<String, String> env = new HashMap<>();
         env.put("XDG_DATA_HOME", "/user/foo/xgd");
-        Path destinationDirectory = Installer.getInstallLocation(platform, Optional.empty(), env);
+        File destination = Installer.getDownloadDestination(platform, Optional.empty(), env);
         assertEquals(
-                destinationDirectory.toString().replace('\\', '/'), // replace so that this test works on Windows
-                "/user/foo/xgd/snyk");
+            toUnixPath(destination),
+            "/user/foo/xgd/snyk/snyk-linux"
+        );
     }
 
     @Test
@@ -66,10 +76,11 @@ public class InstallerTest {
         Platform platform = Platform.LINUX;
         Optional<Path> maybeHomeDir = Optional.of(Paths.get("/user/foo"));
         Map<String, String> env = new HashMap<>();
-        Path destinationDirectory = Installer.getInstallLocation(platform, maybeHomeDir, env);
+        File destination = Installer.getDownloadDestination(platform, maybeHomeDir, env);
         assertEquals(
-                destinationDirectory.toString().replace('\\', '/'), // replace so that this test works on Windows
-                "/user/foo/.local/share/snyk");
+            toUnixPath(destination),
+            "/user/foo/.local/share/snyk/snyk-linux"
+        );
     }
 
     @Test
@@ -77,7 +88,10 @@ public class InstallerTest {
         Platform platform = Platform.LINUX;
         Optional<Path> missingHomeDir = Optional.empty(); // can't get home directory
         Map<String, String> env = new HashMap<>(); // no XDG_DATA_HOME
-        assertThrows(Installer.MissingContextException.class, () -> Installer.getInstallLocation(platform, missingHomeDir, env));
+        assertThrows(
+            Installer.MissingContextException.class,
+            () -> Installer.getDownloadDestination(platform, missingHomeDir, env)
+        );
     }
 
     @Test
@@ -85,10 +99,11 @@ public class InstallerTest {
         Platform platform = Platform.LINUX_ALPINE;
         Map<String, String> env = new HashMap<>();
         env.put("XDG_DATA_HOME", "/user/foo/xgd");
-        Path destinationDirectory = Installer.getInstallLocation(platform, Optional.empty(), env);
+        File destination = Installer.getDownloadDestination(platform, Optional.empty(), env);
         assertEquals(
-                destinationDirectory.toString().replace('\\', '/'), // replace so that this test works on Windows
-                "/user/foo/xgd/snyk");
+            toUnixPath(destination),
+            "/user/foo/xgd/snyk/snyk-alpine"
+        );
     }
 
     @Test
@@ -96,18 +111,29 @@ public class InstallerTest {
         Platform platform = Platform.LINUX_ALPINE;
         Optional<Path> maybeHomeDir = Optional.of(Paths.get("/user/foo"));
         Map<String, String> env = new HashMap<>();
-        Path destinationDirectory = Installer.getInstallLocation(platform, maybeHomeDir, env);
+        File destination = Installer.getDownloadDestination(platform, maybeHomeDir, env);
         assertEquals(
-                destinationDirectory.toString().replace('\\', '/'), // replace so that this test works on Windows
-                "/user/foo/.local/share/snyk");
+            toUnixPath(destination),
+            "/user/foo/.local/share/snyk/snyk-alpine"
+        );
     }
 
     @Test
-    public void aplineThrowsIfXgdNotSetAndHomeDirNotSet() {
+    public void alplineThrowsIfXgdNotSetAndHomeDirNotSet() {
         Platform platform = Platform.LINUX_ALPINE;
         Optional<Path> missingHomeDir = Optional.empty(); // can't get home directory
         Map<String, String> env = new HashMap<>(); // no XDG_DATA_HOME
-        assertThrows(Installer.MissingContextException.class, () -> Installer.getInstallLocation(platform, missingHomeDir, env));
+        assertThrows(
+            Installer.MissingContextException.class,
+            () -> Installer.getDownloadDestination(platform, missingHomeDir, env)
+        );
     }
 
+    private String toWindowsPath(File destination) {
+        return destination.getPath().replace('/', '\\');
+    }
+
+    private String toUnixPath(File destination) {
+        return destination.getPath().replace('\\', '/');
+    }
 }

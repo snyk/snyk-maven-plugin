@@ -2,6 +2,7 @@ package io.snyk.snyk_maven_plugin.goal;
 
 import io.snyk.snyk_maven_plugin.command.Command;
 import io.snyk.snyk_maven_plugin.download.CLIVersions;
+import io.snyk.snyk_maven_plugin.download.Installer;
 import io.snyk.snyk_maven_plugin.download.Platform;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.utils.logging.MessageUtils;
@@ -41,16 +42,21 @@ public abstract class SnykMojo extends ComposedMojo {
 
     private final boolean color;
     private final Platform platform;
-    private final Map<String, String> environmentVariables;
-    private final Optional<Path> homeDirectory;
     private final MojoExecutor executor;
+    private final File downloadDestination;
 
     protected SnykMojo() {
         color = MessageUtils.isColorEnabled();
         platform = Platform.current();
-        environmentVariables = System.getenv();
-        homeDirectory = Optional.ofNullable(System.getProperty("user.home")).map(Paths::get);
         executor = new SnykMojoExecutor(this);
+
+        Map<String, String> environmentVariables = System.getenv();
+        Optional<Path> homeDirectory = Optional.ofNullable(System.getProperty("user.home")).map(Paths::get);
+        downloadDestination = Installer.getDownloadDestination(
+            platform,
+            homeDirectory,
+            environmentVariables
+        );
     }
 
     public List<String> getArguments() {
@@ -64,14 +70,6 @@ public abstract class SnykMojo extends ComposedMojo {
     public Optional<File> getExecutable() {
         return Optional.ofNullable(cli)
             .map(cli -> cli.executable);
-    }
-
-    public Map<String, String> getEnvironmentVariables() {
-        return environmentVariables;
-    }
-
-    public Optional<Path> getHomeDirectory() {
-        return homeDirectory;
     }
 
     public String getDownloadVersion() {
@@ -91,6 +89,10 @@ public abstract class SnykMojo extends ComposedMojo {
 
     public boolean supportsColor() {
         return color;
+    }
+
+    public File getDownloadDestination() {
+        return downloadDestination;
     }
 
     @Override
