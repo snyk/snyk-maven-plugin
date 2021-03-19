@@ -77,6 +77,7 @@ public abstract class SnykMojo extends ComposedMojo {
     public String getDownloadVersion() {
         return Optional.ofNullable(cli)
             .map(cli -> cli.version)
+            .map(CLIVersions::sanitize)
             .orElse(CLIVersions.LATEST_VERSION_KEYWORD);
     }
 

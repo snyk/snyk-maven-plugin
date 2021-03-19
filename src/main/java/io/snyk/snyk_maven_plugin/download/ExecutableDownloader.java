@@ -16,8 +16,7 @@ public class ExecutableDownloader {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static File download(Path destination, Platform platform, String version) {
         try {
-            String sanitizedVersion = CLIVersions.sanitize(version);
-            URL url = new URL(format(SNYK_RELEASES_LATEST, sanitizedVersion, platform.snykExecutableFileName));
+            URL url = new URL(format(SNYK_RELEASES_LATEST, version, platform.snykExecutableFileName));
             destination.toFile().mkdirs();
             File file = destination.resolve(platform.snykExecutableFileName).toFile();
             try (
