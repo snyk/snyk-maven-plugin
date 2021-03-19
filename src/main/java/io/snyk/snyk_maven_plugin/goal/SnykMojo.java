@@ -2,8 +2,8 @@ package io.snyk.snyk_maven_plugin.goal;
 
 import io.snyk.snyk_maven_plugin.command.Command;
 import io.snyk.snyk_maven_plugin.download.CLIVersions;
+import io.snyk.snyk_maven_plugin.download.ExecutableDestination;
 import io.snyk.snyk_maven_plugin.download.ExecutableDownloader;
-import io.snyk.snyk_maven_plugin.download.Installer;
 import io.snyk.snyk_maven_plugin.download.Platform;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.utils.logging.MessageUtils;
@@ -54,7 +54,7 @@ public abstract class SnykMojo extends ComposedMojo {
 
         Map<String, String> environmentVariables = System.getenv();
         Optional<Path> homeDirectory = Optional.ofNullable(System.getProperty("user.home")).map(Paths::get);
-        downloadDestination = Installer.getDownloadDestination(
+        downloadDestination = ExecutableDestination.getDownloadDestination(
             platform,
             homeDirectory,
             environmentVariables

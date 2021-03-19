@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
-public class Installer {
+public class ExecutableDestination {
 
     public static File getDownloadDestination(Platform platform, Optional<Path> homeDirectory, Map<String, String> env)
     throws MissingContextException {
@@ -39,7 +39,7 @@ public class Installer {
                     .orElseThrow(() -> new MissingContextException("Linux needs XDG_DATA_HOME or home directory."));
             }
             default: {
-                throw new MissingContextException("Unsupported platform (" + platform + ").");
+                throw new RuntimeException("Unsupported platform (" + platform + ").");
             }
         }
     }
