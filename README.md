@@ -18,39 +18,35 @@ Official [Snyk](https://snyk.io) Maven plugin tests and monitors your Maven depe
 
 ```xml
 <build>
-    <plugins>
-        <plugin>
-            <groupId>io.snyk</groupId>
-            <artifactId>snyk-maven-plugin</artifactId>
-            <version>2.0.0</version>
-            <executions>
-                <execution>
-                    <id>snyk-test</id>
-                    <phase>test</phase>
-                    <goals>
-                        <goal>test</goal>
-                    </goals>
-                </execution>
-                <execution>
-                    <id>snyk-monitor</id>
-                    <phase>install</phase>
-                    <goals>
-                        <goal>monitor</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <apiToken>${env.SNYK_TOKEN}</apiToken>
-                <args>
-                    <arg>--all-projects</arg>
-                </args>
-            </configuration>
-        </plugin>
-    </plugins>
+  <plugins>
+    <plugin>
+      <groupId>io.snyk</groupId>
+      <artifactId>snyk-maven-plugin</artifactId>
+      <version>2.0.0</version>
+      <executions>
+        <execution>
+          <id>snyk-test</id>
+          <goals>
+            <goal>test</goal>
+          </goals>
+        </execution>
+        <execution>
+          <id>snyk-monitor</id>
+          <goals>
+            <goal>monitor</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <apiToken>${env.SNYK_TOKEN}</apiToken>
+        <args>
+          <arg>--all-projects</arg>
+        </args>
+      </configuration>
+    </plugin>
+  </plugins>
 </build>
 ```
-
-3. We recommend to set the **test** goal in the **test** phase of Maven; and the **monitor** goal in the **install** phase of Maven.
 
 ## Configuration
 
