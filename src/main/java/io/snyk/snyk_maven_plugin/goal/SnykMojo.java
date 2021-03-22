@@ -40,25 +40,19 @@ public abstract class SnykMojo extends ComposedMojo {
         @Parameter
         private String updatePolicy;
 
+        @Parameter
+        private File downloadDestination;
+
     }
 
     private final boolean color;
     private final Platform platform;
     private final MojoExecutor executor;
-    private final File downloadDestination;
 
     protected SnykMojo() {
         color = MessageUtils.isColorEnabled();
         platform = Platform.current();
         executor = new SnykMojoExecutor(this);
-
-        Map<String, String> environmentVariables = System.getenv();
-        Optional<Path> homeDirectory = Optional.ofNullable(System.getProperty("user.home")).map(Paths::get);
-        downloadDestination = ExecutableDestination.getDownloadDestination(
-            platform,
-            homeDirectory,
-            environmentVariables
-        );
     }
 
     public List<String> getArguments() {
@@ -90,7 +84,17 @@ public abstract class SnykMojo extends ComposedMojo {
     }
 
     public File getDownloadDestination() {
-        return downloadDestination;
+
+
+        return Optional.ofNullable(cli).map(cli -> cli.downloadDestination).orElseGet(() -> {
+            Map<String, String> environmentVariables = System.getenv();
+            Optional<Path> homeDirectory = Optional.ofNullable(System.getProperty("user.home")).map(Paths::get);
+            return ExecutableDestination.getDownloadDestination(
+                platform,
+                homeDirectory,
+                environmentVariables
+            );
+        });
     }
 
     public URL getDownloadUrl() {
@@ -102,7 +106,7 @@ public abstract class SnykMojo extends ComposedMojo {
             .map(cli -> cli.updatePolicy)
             .orElse(UpdatePolicy.DAILY);
     }
-    
+
     @Override
     public MojoExecutor getExecutor() {
         return executor;
