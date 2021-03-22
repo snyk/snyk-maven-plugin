@@ -1,13 +1,21 @@
 package io.snyk.snyk_maven_plugin.download;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
-public class Installer {
+public class ExecutableDestination {
 
-    public static Path getInstallLocation(Platform platform, Optional<Path> homeDirectory, Map<String, String> env)
+    public static File getDownloadDestination(Platform platform, Optional<Path> homeDirectory, Map<String, String> env)
+    throws MissingContextException {
+        return getDownloadDirectory(platform, homeDirectory, env)
+            .resolve(platform.snykExecutableFileName)
+            .toFile();
+    }
+
+    private static Path getDownloadDirectory(Platform platform, Optional<Path> homeDirectory, Map<String, String> env)
     throws MissingContextException {
         switch (platform) {
             case MAC_OS: {
@@ -31,7 +39,7 @@ public class Installer {
                     .orElseThrow(() -> new MissingContextException("Linux needs XDG_DATA_HOME or home directory."));
             }
             default: {
-                throw new MissingContextException("Unsupported platform (" + platform + ").");
+                throw new RuntimeException("Unsupported platform (" + platform + ").");
             }
         }
     }

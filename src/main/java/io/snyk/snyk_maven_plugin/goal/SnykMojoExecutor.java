@@ -3,15 +3,11 @@ package io.snyk.snyk_maven_plugin.goal;
 import io.snyk.snyk_maven_plugin.command.CommandLine;
 import io.snyk.snyk_maven_plugin.command.CommandRunner;
 import io.snyk.snyk_maven_plugin.download.ExecutableDownloader;
-import io.snyk.snyk_maven_plugin.download.Platform;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.File;
-import java.nio.file.Path;
-
-import static io.snyk.snyk_maven_plugin.download.Installer.getInstallLocation;
 
 public class SnykMojoExecutor implements MojoExecutor {
 
@@ -51,13 +47,9 @@ public class SnykMojoExecutor implements MojoExecutor {
     }
 
     private File downloadExecutable() {
-        Platform platform = mojo.getPlatform();
-        String version = mojo.getDownloadVersion();
-        Path directory = getInstallLocation(
-            platform,
-            mojo.getHomeDirectory(),
-            mojo.getEnvironmentVariables()
+        return ExecutableDownloader.download(
+            mojo.getDownloadUrl(),
+            mojo.getDownloadDestination()
         );
-        return ExecutableDownloader.download(directory, platform, version);
     }
 }
