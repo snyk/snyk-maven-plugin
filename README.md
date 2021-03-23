@@ -110,7 +110,8 @@ see [Snyk CLI Reference](https://support.snyk.io/hc/en-us/articles/360003812578-
 
 ### `cli` \[object\]
 
-Lets you configure the Snyk CLI that's used by this plugin.
+Lets you configure the Snyk CLI that's used by this plugin. 
+For most use cases you don't need to set any `<cli>` options.
 
 ```xml
 <!-- Example CLI Configuration -->
@@ -132,7 +133,8 @@ Example: `~/.local/share/snyk/snyk-linux`
 
 Default: `latest`, Accepts: `latest` or an exact version such as `1.149.0`.
 
-The version of the CLI to download.
+The version of the CLI to download. Setting this option will always trigger
+a download of the CLI.
 
 ## Migrating from Snyk Maven Plugin v1
 
