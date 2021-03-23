@@ -1,5 +1,6 @@
 package io.snyk.snyk_maven_plugin.goal;
 
+import io.snyk.snyk_maven_plugin.command.Command;
 import io.snyk.snyk_maven_plugin.command.CommandLine;
 import io.snyk.snyk_maven_plugin.command.CommandRunner;
 import io.snyk.snyk_maven_plugin.download.ExecutableDownloader;
@@ -8,6 +9,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.File;
+import java.util.Optional;
+
+import static java.util.Collections.emptyList;
 
 public class SnykMojoExecutor implements MojoExecutor {
 
@@ -32,14 +36,28 @@ public class SnykMojoExecutor implements MojoExecutor {
 
     private int executeCommand() throws MojoExecutionException {
         try {
+            Log log = mojo.getLog();
+
+            String snykExecutablePath = mojo.getExecutable().orElseGet(this::downloadExecutable).getAbsolutePath();
+            log.info("snyk executable path: " + snykExecutablePath);
+
+            ProcessBuilder versionCommandLine = CommandLine.asProcessBuilder(
+                    snykExecutablePath,
+                    Command.VERSION,
+                    Optional.empty(),
+                    emptyList(),
+                    mojo.supportsColor()
+            );
+            log.info("snyk version:");
+            CommandRunner.run(versionCommandLine::start, log::info, log::error);
+
             ProcessBuilder commandLine = CommandLine.asProcessBuilder(
-                mojo.getExecutable().orElseGet(this::downloadExecutable).getAbsolutePath(),
+                snykExecutablePath,
                 mojo.getCommand(),
                 mojo.getApiToken(),
                 mojo.getArguments(),
                 mojo.supportsColor()
             );
-            Log log = mojo.getLog();
             return CommandRunner.run(commandLine::start, log::info, log::error);
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);

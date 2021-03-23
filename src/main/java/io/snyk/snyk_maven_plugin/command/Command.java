@@ -3,7 +3,8 @@ package io.snyk.snyk_maven_plugin.command;
 public enum Command {
 
     TEST("test"),
-    MONITOR("monitor");
+    MONITOR("monitor"),
+    VERSION("version");
 
     private final String commandName;
 
