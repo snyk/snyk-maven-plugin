@@ -49,7 +49,8 @@ public class SnykMojoExecutor implements MojoExecutor {
     private File downloadExecutable() {
         return ExecutableDownloader.download(
             mojo.getDownloadUrl(),
-            mojo.getDownloadDestination()
+            mojo.getDownloadDestination(),
+            mojo.getUpdatePolicy()
         );
     }
 }

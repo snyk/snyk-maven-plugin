@@ -1,10 +1,7 @@
 package io.snyk.snyk_maven_plugin.goal;
 
 import io.snyk.snyk_maven_plugin.command.Command;
-import io.snyk.snyk_maven_plugin.download.CLIVersions;
-import io.snyk.snyk_maven_plugin.download.ExecutableDestination;
-import io.snyk.snyk_maven_plugin.download.ExecutableDownloader;
-import io.snyk.snyk_maven_plugin.download.Platform;
+import io.snyk.snyk_maven_plugin.download.*;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.utils.logging.MessageUtils;
 
@@ -40,25 +37,22 @@ public abstract class SnykMojo extends ComposedMojo {
         @Parameter
         private String version;
 
+        @Parameter
+        private String updatePolicy;
+
+        @Parameter
+        private File downloadDestination;
+
     }
 
     private final boolean color;
     private final Platform platform;
     private final MojoExecutor executor;
-    private final File downloadDestination;
 
     protected SnykMojo() {
         color = MessageUtils.isColorEnabled();
         platform = Platform.current();
         executor = new SnykMojoExecutor(this);
-
-        Map<String, String> environmentVariables = System.getenv();
-        Optional<Path> homeDirectory = Optional.ofNullable(System.getProperty("user.home")).map(Paths::get);
-        downloadDestination = ExecutableDestination.getDownloadDestination(
-            platform,
-            homeDirectory,
-            environmentVariables
-        );
     }
 
     public List<String> getArguments() {
@@ -90,11 +84,30 @@ public abstract class SnykMojo extends ComposedMojo {
     }
 
     public File getDownloadDestination() {
-        return downloadDestination;
+
+
+        return Optional.ofNullable(cli).map(cli -> cli.downloadDestination).orElseGet(() -> {
+            Map<String, String> environmentVariables = System.getenv();
+            Optional<Path> homeDirectory = Optional.ofNullable(System.getProperty("user.home")).map(Paths::get);
+            return ExecutableDestination.getDownloadDestination(
+                platform,
+                homeDirectory,
+                environmentVariables
+            );
+        });
     }
 
     public URL getDownloadUrl() {
         return ExecutableDownloader.getDownloadUrl(platform, getDownloadVersion());
+    }
+
+    public String getUpdatePolicy() {
+        if (!getDownloadVersion().equals(CLIVersions.LATEST_VERSION_KEYWORD)) {
+            return UpdatePolicy.ALWAYS;
+        }
+        return Optional.ofNullable(cli)
+            .map(cli -> cli.updatePolicy)
+            .orElse(UpdatePolicy.DAILY);
     }
 
     @Override

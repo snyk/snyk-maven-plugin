@@ -7,14 +7,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
+
+import static io.snyk.snyk_maven_plugin.download.UpdatePolicy.shouldUpdate;
+import static java.lang.String.format;
 
 public class ExecutableDownloader {
 
     private static final String SNYK_RELEASES_LATEST = "https://static.snyk.io/cli/%s/%s";
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static File download(URL url, File destination) {
+    public static File download(URL url, File destination, String updatePolicy) {
         try {
+            if (
+                destination.exists() &&
+                !shouldUpdate(updatePolicy, destination.lastModified(), System.currentTimeMillis())
+            ) {
+                return destination;
+            }
             destination.getParentFile().mkdirs();
             try (
                 ReadableByteChannel rbc = Channels.newChannel(url.openStream());

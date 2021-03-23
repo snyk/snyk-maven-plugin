@@ -131,10 +131,9 @@ Example: `~/.local/share/snyk/snyk-linux`
 
 #### `version` \[string\]
 
-Default: `latest`, Accepts: `latest` or an exact version such as `1.149.0`.
+Specify if you want to use a specific version otherwise the latest version will be used. For example, `1.149.0`. 
 
-The version of the CLI to download. Setting this option will always trigger
-a download of the CLI.
+Setting this option will trigger a download of the CLI with each run.
 
 ## Migrating from Snyk Maven Plugin v1
 
