@@ -102,6 +102,9 @@ public abstract class SnykMojo extends ComposedMojo {
     }
 
     public String getUpdatePolicy() {
+        if (!getDownloadVersion().equals(CLIVersions.LATEST_VERSION_KEYWORD)) {
+            return UpdatePolicy.ALWAYS;
+        }
         return Optional.ofNullable(cli)
             .map(cli -> cli.updatePolicy)
             .orElse(UpdatePolicy.DAILY);

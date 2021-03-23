@@ -25,6 +25,7 @@
           <apiToken>${env.SNYK_TEST_TOKEN}</apiToken>
           <cli>
             <version>1.487.0</version>
+            <downloadDestination>${env.SNYK_DOWNLOAD_DESTINATION}</downloadDestination>
           </cli>
         </configuration>
       </plugin>
