@@ -205,8 +205,10 @@
           <pomIncludes>
             <pomInclude>*/pom.xml</pomInclude>
           </pomIncludes>
+          <preBuildHookScript>setup</preBuildHookScript>
           <postBuildHookScript>verify</postBuildHookScript>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+          <addTestClassPath>true</addTestClassPath>
           <settingsFile>src/it/settings.xml</settingsFile>
           <environmentVariables>
             <SNYK_TOKEN><!-- disable global environment auth for tests --></SNYK_TOKEN>

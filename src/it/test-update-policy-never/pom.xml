@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.snyk.it</groupId>
-  <artifactId>test-with-args</artifactId>
+  <artifactId>test-update-policy-never</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <build>
@@ -24,6 +24,7 @@
         <configuration>
           <cli>
             <updatePolicy>never</updatePolicy>
+            <downloadDestination>${env.SNYK_DOWNLOAD_DESTINATION}</downloadDestination>
           </cli>
           <apiToken>${env.SNYK_TEST_TOKEN}</apiToken>
         </configuration>

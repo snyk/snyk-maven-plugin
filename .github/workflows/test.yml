@@ -52,6 +52,7 @@ jobs:
         env:
           SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
           SNYK_CLI_EXECUTABLE: /usr/local/bin/snyk
+          SNYK_DOWNLOAD_DESTINATION: "downloads/snyk"
 
       - name: Run Acceptance Tests (Windows)
         if: ${{ matrix.os == 'windows' }}
@@ -59,6 +60,7 @@ jobs:
         env:
           SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
           SNYK_CLI_EXECUTABLE: "C:\\npm\\prefix\\snyk.cmd"
+          SNYK_DOWNLOAD_DESTINATION: "downloads\\snyk.exe"
 
       - name: Show Integration Test build.log files
         if: ${{ failure() }}

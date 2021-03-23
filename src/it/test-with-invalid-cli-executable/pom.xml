@@ -24,6 +24,7 @@
         <configuration>
           <cli>
             <executable>/usr/local/bin/snyk-does-not-exist</executable>
+            <downloadDestination>${env.SNYK_DOWNLOAD_DESTINATION}</downloadDestination>
           </cli>
           <apiToken>${env.SNYK_TEST_TOKEN}</apiToken>
         </configuration>
