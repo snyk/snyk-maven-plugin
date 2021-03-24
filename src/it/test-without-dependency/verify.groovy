@@ -6,7 +6,7 @@ if (!log.contains("snyk executable path: " + System.getenv("SNYK_CLI_EXECUTABLE"
     throw new Exception("snyk executable path message not found.");
 }
 
-if (!(log =~ /\[INFO\] snyk version:\R\[INFO\] \d+\.\d+\.\d+/)) {
+if (!(log =~ /\[INFO\] Snyk CLI version:\R\[INFO\] \d+\.\d+\.\d+/)) {
     throw new Exception("snyk version output not found");
 }
 

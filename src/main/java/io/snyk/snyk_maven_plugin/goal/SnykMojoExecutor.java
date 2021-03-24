@@ -42,13 +42,13 @@ public class SnykMojoExecutor implements MojoExecutor {
             log.info("snyk executable path: " + snykExecutablePath);
 
             ProcessBuilder versionCommandLine = CommandLine.asProcessBuilder(
-                    snykExecutablePath,
-                    Command.VERSION,
-                    Optional.empty(),
-                    emptyList(),
-                    mojo.supportsColor()
+                snykExecutablePath,
+                Command.VERSION,
+                Optional.empty(),
+                emptyList(),
+                mojo.supportsColor()
             );
-            log.info("snyk version:");
+            log.info("Snyk CLI version:");
             CommandRunner.run(versionCommandLine::start, log::info, log::error);
 
             ProcessBuilder commandLine = CommandLine.asProcessBuilder(
