@@ -7,11 +7,31 @@
 
   <groupId>io.snyk</groupId>
   <artifactId>snyk-maven-plugin</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.0.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>Snyk Maven Plugin</name>
+  <description>Tests and monitors your Maven dependencies for vulnerabilities. This plugin is officially maintained by Snyk.io</description>
   <url>https://snyk.io</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/snyk/snyk-maven-plugin</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>snyk.io</name>
+      <email>support@snyk.io</email>
+    </developer>
+  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -278,7 +298,7 @@
               </execution>
             </executions>
             <configuration>
-              <keyname></keyname>
+              <keyname>EC283DF4FA0C6996558BB30CE0D0C6A89DB85115</keyname>
             </configuration>
           </plugin>
 
@@ -306,6 +326,10 @@
     </profile>
   </profiles>
   <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
     <snapshotRepository>
       <id>ossrh</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
