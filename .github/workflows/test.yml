@@ -1,0 +1,67 @@
+name: Build and Test
+
+on: push
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false  # we care about other platforms and channels building
+      matrix:
+        os: [ ubuntu, macos, windows ]
+        maven_version: [ 3.2.5, 3.6.3 ]
+    runs-on: ${{ matrix.os }}-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Cache Local Maven Repository
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.m2/wrapper
+          key: ${{ runner.os }}-maven-${{ hashFiles('pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Install Maven for Acceptance Tests
+        run: |
+          mvn -N "io.takari:maven:0.7.7:wrapper" "-Dmaven=${{matrix.maven_version}}"
+          ./mvnw --version
+
+      - name: Install Plugin to .m2
+        run: mvn -B install "-DskipTests" "-Dinvoker.skip=true"
+
+      - name: Run Unit Tests
+        run: mvn -B surefire:test
+
+      - name: Install Snyk CLI (Ubuntu/macOS)
+        if: ${{ matrix.os != 'windows' }}
+        run: sudo npm install -g snyk
+
+      - name: Install Snyk CLI (Windows)
+        if: ${{ matrix.os == 'windows' }}
+        run: npm install -g snyk
+
+      - name: Run Acceptance Tests (Ubuntu/macOS)
+        if: ${{ matrix.os != 'windows' }}
+        run: mvn -B invoker:install invoker:run
+        env:
+          SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
+          SNYK_CLI_EXECUTABLE: /usr/local/bin/snyk
+          SNYK_DOWNLOAD_DESTINATION: "downloads/snyk"
+
+      - name: Run Acceptance Tests (Windows)
+        if: ${{ matrix.os == 'windows' }}
+        run: mvn -B invoker:install invoker:run
+        env:
+          SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
+          SNYK_CLI_EXECUTABLE: "C:\\npm\\prefix\\snyk.cmd"
+          SNYK_DOWNLOAD_DESTINATION: "downloads\\snyk.exe"
+
+      - name: Show Integration Test build.log files
+        if: ${{ failure() }}
+        run: cat target/it/**/build.log
