@@ -1,16 +1,16 @@
-<img src="https://snyk.io/style/asset/logo/snyk-print.svg" alt="Snyk Logo" style="float:right" />
+<img src="https://snyk.io/style/asset/logo/snyk-print.svg" alt="Snyk Logo" />
 
 # Snyk Maven Plugin
 
 ![Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/snyk/snyk-maven-plugin.svg)
 ![Maven Release](https://img.shields.io/maven-central/v/io.snyk/snyk-maven-plugin)
 
-Tests and monitors your Maven dependencies. This plugin is officially maintained
-by [Snyk](https://snyk.io).
+Tests and monitors your Maven dependencies for vulnerabilities. This plugin is
+officially maintained by [Snyk](https://snyk.io).
 
 ## Installation
 
-1. [Get your Snyk API token](https://snyk.co/ucT6J).
+1. [Get your Snyk API token](https://support.snyk.io/hc/en-us/articles/360004037537-Authentication-for-third-party-tools).
 
 2. Add the Snyk Maven Plugin to your `pom.xml` and configure it as needed.
 
@@ -54,19 +54,16 @@ by [Snyk](https://snyk.io).
 
 ## Goals
 
-You can specify the following `goals`. You can run these outside your Maven
-lifecycle using `mvn snyk:<goal>`.
-
 ### `test`
 
-Presents a list of vulnerabilities in your project's dependencies, in either a
-developer's machine or in your CI process.
+Scans your project's dependencies and provides a list of vulnerabilities if any
+are found.
 
 ### `monitor`
 
-Records the state of dependencies and any vulnerabilities
-on [snyk.io](https://snyk.io) so you can be alerted when new vulnerabilities or
-updates/patches are disclosed that affect your repositories.
+Takes a snapshot of your project's dependency tree and monitors it on [snyk.io](https://snyk.io).
+You'll be alerted when new relevant vulnerabilities, updates or patches are
+disclosed.
 
 ## Configuration
 
@@ -75,18 +72,21 @@ All parameters are optional.
 
 ### `apiToken` \[string\]
 
+> ⚠️ Do NOT include your API token directly in your `pom.xml`. Use a variable
+> instead.
+
 You must provide a Snyk API token to access Snyk's services. You can do so by:
 
-- Providing this `apiToken` in your configuration.
-- Providing a `SNYK_TOKEN` environment variable
-- Authenticating via `snyk auth` using Snyk CLI before using this plugin.
+- Providing `apiToken` in your configuration using a variable.
+- Providing a `SNYK_TOKEN` environment variable.
+- Authenticating via `snyk auth` using the Snyk CLI before using this plugin.
 
 ### `skip` \[boolean\]
 
 Default: `false`
 
-Skip this plugin's execution. You can also use `-Dsnyk.skip` to toggle this
-behaviour.
+Skip this execution entirely. You can also use `-Dsnyk.skip` to toggle this
+behavior.
 
 ### `args` \[array\<string\>\]
 
@@ -94,8 +94,7 @@ This plugin uses [Snyk CLI](https://github.com/snyk/snyk) so you can pass any
 supported arguments using `<args>`. See the example below.
 
 For a list of supported arguments,
-see [Snyk CLI Reference](https://support.snyk.io/hc/en-us/articles/360003812578-CLI-reference)
-.
+see [Snyk CLI Reference](https://support.snyk.io/hc/en-us/articles/360003812578-CLI-reference).
 
 ```xml
 <!-- Example Arguments Configuration -->
@@ -110,35 +109,71 @@ see [Snyk CLI Reference](https://support.snyk.io/hc/en-us/articles/360003812578-
 
 ### `cli` \[object\]
 
-Lets you configure the Snyk CLI that's used by this plugin. 
-For most use cases you don't need to set any `<cli>` options.
+Lets you configure the Snyk CLI that's used by this plugin.
 
-```xml
-<!-- Example CLI Configuration -->
-<configuration>
-  <cli>
-    <!-- Place CLI Configuration Here -->
-  </cli>
-</configuration>
-```
+By default, the CLI will be automatically downloaded and updated for you.
+
+See [CLI Configuration](#cli-configuration).
+
+## CLI Configuration
+
+> ⚠️ For most use cases you don't need to set any `<cli>` options.
+
+You can configure the CLI in three different modes:
+
+- [Auto-Download and Update](#auto-download-and-update) (default)
+- [Custom CLI Executable](#custom-cli-executable)
+- [Specific CLI Version](#specific-cli-version)
+
+### Auto-Download and Update
+
+#### `updatePolicy` \[string\]
+
+Default: `daily`
+
+How often to download the latest CLI release. Can be one of the following:
+
+- `daily` - On the first execution of the day.
+- `always` - On every execution.
+- `never` - Never update after the initial download.
+- `interval:<minutes>` - On the execution after more than `<minutes>` has
+  passed since the last update. e.g. `interval:60` will update after an hour.
+
+#### `downloadDestination` \[string\]
+
+Default: OS-specific, see below.
+
+Where to place the downloaded executable. By default, this is OS-specific as
+follows:
+
+- Linux - `$XDG_DATA_HOME/snyk` or `~/.local/share/snyk`
+- macOS - `~/Library/Application Support/Snyk`
+- Windows - `$APPDATA/Snyk`
+
+### Custom CLI Executable
 
 #### `executable` \[string\]
 
-Path to a Snyk CLI binary. When provided, this plugin won't automatically
-download the CLI.
-
 Example: `~/.local/share/snyk/snyk-linux`
+
+Path to a pre-installed Snyk CLI executable. You can find executables on the
+[Snyk CLI Releases page](https://github.com/snyk/snyk/releases).
+
+### Specific CLI Version
 
 #### `version` \[string\]
 
-Specify if you want to use a specific version otherwise the latest version will be used. For example, `1.149.0`. 
+Example: `1.149.0`
 
-Setting this option will trigger a download of the CLI with each run.
+Specify if you want to use a specific version. You can find versions on the
+[Snyk CLI Releases page](https://github.com/snyk/snyk/releases).
 
-## Migrating from Snyk Maven Plugin v1
+Setting this option will trigger a download of the CLI on every execution.
 
-All plugin options from v1 were moved to the `<args>` object, to keep them in
-line with the CLI usage. See the mapping:
+## Migrating from Snyk Maven Plugin v1 to v2
+
+All plugin parameters from v1 should be moved to the `<args>` object, to keep
+them in line with the CLI usage. For example:
 
 - `org` => `<arg>--org=my-org-name</arg>`
 - `failOnSeverity` => `<arg>--severity-threshold=low|medium|high</arg>`
@@ -146,3 +181,7 @@ line with the CLI usage. See the mapping:
 - `includeProvidedDependencies` => `provided` dependencies are always included.
 
 For a list of support arguments, see [Configuration](#args-arraystring)
+
+---
+
+Made with 💜 by Snyk
