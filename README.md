@@ -22,6 +22,7 @@ officially maintained by [Snyk](https://snyk.io).
       <groupId>io.snyk</groupId>
       <artifactId>snyk-maven-plugin</artifactId>
       <version>2.0.0</version>
+      <inherited>false</inherited>
       <executions>
         <execution>
           <id>snyk-test</id>
