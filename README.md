@@ -101,7 +101,7 @@ see [Snyk CLI Reference](https://support.snyk.io/hc/en-us/articles/360003812578-
 <!-- Example Arguments Configuration -->
 <configuration>
   <args>
-    <arg>--severity-threshold=critical</arg>
+    <arg>--severity-threshold=high</arg>
     <arg>--scan-all-unmanaged</arg>
     <arg>--json</arg>
   </args>
