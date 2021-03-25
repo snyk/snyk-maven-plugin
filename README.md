@@ -57,10 +57,14 @@ officially maintained by [Snyk](https://snyk.io).
 
 ### `test`
 
+Default Phase: `test`
+
 Scans your project's dependencies and provides a list of vulnerabilities if any
 are found.
 
 ### `monitor`
+
+Default Phase: `install`
 
 Takes a snapshot of your project's dependency tree and monitors it
 on [snyk.io](https://snyk.io). You'll be alerted when new relevant
