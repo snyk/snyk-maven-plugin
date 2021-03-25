@@ -2,15 +2,15 @@
 
 # Snyk Maven Plugin
 
-![Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/snyk/snyk-maven-plugin.svg)
-![Maven Release](https://img.shields.io/maven-central/v/io.snyk/snyk-maven-plugin)
+[![Maven Release](https://img.shields.io/maven-central/v/io.snyk/snyk-maven-plugin)](https://search.maven.org/artifact/io.snyk/snyk-maven-plugin)
+[![Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/snyk/snyk-maven-plugin.svg)](https://snyk.io)
 
 Tests and monitors your Maven dependencies for vulnerabilities. This plugin is
 officially maintained by [Snyk](https://snyk.io).
 
 ## Installation
 
-1. [Get your Snyk API token](https://support.snyk.io/hc/en-us/articles/360004037537-Authentication-for-third-party-tools).
+1. [Get your Snyk API token.](https://support.snyk.io/hc/en-us/articles/360004037537-Authentication-for-third-party-tools)
 
 2. Add the Snyk Maven Plugin to your `pom.xml` and configure it as needed.
 
@@ -61,9 +61,9 @@ are found.
 
 ### `monitor`
 
-Takes a snapshot of your project's dependency tree and monitors it on [snyk.io](https://snyk.io).
-You'll be alerted when new relevant vulnerabilities, updates or patches are
-disclosed.
+Takes a snapshot of your project's dependency tree and monitors it
+on [snyk.io](https://snyk.io). You'll be alerted when new relevant
+vulnerabilities, updates or patches are disclosed.
 
 ## Configuration
 
@@ -136,8 +136,8 @@ How often to download the latest CLI release. Can be one of the following:
 - `daily` - On the first execution of the day.
 - `always` - On every execution.
 - `never` - Never update after the initial download.
-- `interval:<minutes>` - On the execution after more than `<minutes>` has
-  passed since the last update. e.g. `interval:60` will update after an hour.
+- `interval:<minutes>` - On the execution after more than `<minutes>` has passed
+  since the last update. e.g. `interval:60` will update after an hour.
 
 #### `downloadDestination` \[string\]
 
@@ -146,9 +146,9 @@ Default: OS-specific, see below.
 Where to place the downloaded executable. By default, this is OS-specific as
 follows:
 
-- Linux - `$XDG_DATA_HOME/snyk` or `~/.local/share/snyk`
-- macOS - `~/Library/Application Support/Snyk`
-- Windows - `$APPDATA/Snyk`
+- Linux - `$XDG_DATA_HOME/snyk/snyk-linux` or `~/.local/share/snyk/snyk-linux`
+- macOS - `~/Library/Application Support/Snyk/snyk-macos`
+- Windows - `%APPDATA%\Snyk\snyk-win.exe`
 
 ### Custom CLI Executable
 
@@ -180,7 +180,7 @@ them in line with the CLI usage. For example:
 - `failOnAuthError` => Use `<skip>true</skip>` to skip plugin execution.
 - `includeProvidedDependencies` => `provided` dependencies are always included.
 
-For a list of support arguments, see [Configuration](#args-arraystring)
+For a list of supported arguments, see [Configuration](#args-arraystring).
 
 ---
 
