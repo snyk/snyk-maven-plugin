@@ -80,18 +80,6 @@
       <version>3.3.3</version>
     </dependency>
 
-    <!-- Jodd -->
-    <dependency>
-      <groupId>org.jodd</groupId>
-      <artifactId>jodd-json</artifactId>
-      <version>6.0.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jodd</groupId>
-      <artifactId>jodd-http</artifactId>
-      <version>6.0.5</version>
-    </dependency>
-
     <!-- Testing -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
