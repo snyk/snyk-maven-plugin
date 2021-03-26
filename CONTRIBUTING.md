@@ -10,6 +10,14 @@ use it in return. If you submit a pull request, you will be prompted to review
 and sign the agreement with one click (we
 use [CLA assistant](https://cla-assistant.io/)).
 
+## Development
+
+- `./develop.sh` - Ensures your environment is setup correctly.
+- `mvn test` - Run Unit Tests
+- `mvn clean verify` - Run Unit and Acceptance Tests
+- `mvn clean verify -Dinvoker.test='*<test-name>*'` - Run specific Acceptance
+  Tests.
+
 ## Commit messages
 
 Commit messages must follow
