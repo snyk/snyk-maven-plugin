@@ -89,7 +89,7 @@
     <dependency>
       <groupId>org.jodd</groupId>
       <artifactId>jodd-http</artifactId>
-      <version>6.0.5</version>
+      <version>6.0.6</version>
     </dependency>
 
     <!-- Testing -->
