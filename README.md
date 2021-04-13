@@ -187,6 +187,10 @@ Specify if you want to use a specific version. You can find versions on the
 
 Setting this option will trigger a download of the CLI on every execution.
 
+## Demonstration
+
+To try out this plugin, see [the demo project](https://github.com/snyk/demo-snyk-maven-plugin).
+
 ## Migrating from Snyk Maven Plugin v1 to v2
 
 All plugin parameters from v1 should be moved to the `<args>` object, to keep
