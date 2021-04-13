@@ -131,6 +131,17 @@ You can configure the CLI in three different modes:
 - [Custom CLI Executable](#custom-cli-executable)
 - [Specific CLI Version](#specific-cli-version)
 
+Follow the link for each mode to see which parameters are available.
+
+```xml
+<!-- Example CLI Configuration -->
+<configuration>
+  <cli>
+    <updatePolicy>daily</updatePolicy>
+  </cli>
+</configuration>
+```
+
 ### Auto-Download and Update
 
 #### `updatePolicy` \[string\]
