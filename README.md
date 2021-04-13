@@ -90,8 +90,9 @@ You must provide a Snyk API token to access Snyk's services. You can do so by:
 
 Default: `false`
 
-Skip this execution entirely. You can also use `-Dsnyk.skip` to toggle this
-behavior.
+Skip this execution entirely.
+
+When running `mvn`, you can also use `-Dsnyk.skip` to enable this behavior.
 
 ### `args` \[array\<string\>\]
 
