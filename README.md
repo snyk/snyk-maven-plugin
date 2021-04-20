@@ -180,7 +180,7 @@ Path to a pre-installed Snyk CLI executable. You can find executables on the
 
 #### `version` \[string\]
 
-Example: `1.149.0`
+Example: `1.542.0`
 
 Specify if you want to use a specific version. You can find versions on the
 [Snyk CLI Releases page](https://github.com/snyk/snyk/releases).
