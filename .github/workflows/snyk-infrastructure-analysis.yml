@@ -1,0 +1,169 @@
+# A sample workflow which checks out your Infrastructure as Code Configuration files,
+# such as Kubernetes, Helm & Terraform and scans them for any security issues.
+# The results are then uploaded to GitHub Security Code Scanning
+#
+# For more examples, including how to limit scans to only high-severity issues
+# and fail PR checks, see https://github.com/snyk/actions/
+
+name: Snyk Infrastructure as Code
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ master ]
+  schedule:
+    - cron: '43 12 * * 4'
+
+jobs:
+  snyk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Snyk to check configuration files for security issues
+        # Snyk can be used to break the build when it detects security issues.
+        # In this case we want to upload the issues to GitHub Code Scanning
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          # In order to use the Snyk Action you will need to have a Snyk API token.
+          # More details in https://github.com/snyk/actions#getting-your-snyk-token
+          # or you can signup for free at https://snyk.io/login
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          # Add the path to the configuration file that you would like to test.
+          # For example `deployment.yaml` for a Kubernetes deployment manifest
+          # or `main.tf` for a Terraform configuration file
+          file: your-file-to-test.yaml
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: snyk.sarif
+ / Setup .NET Core SDK
+Setup .NET Core SDK
+By actions 
+ v1.8.1
+ 320
+Used to build and publish .NET source. Set up a specific version of the .NET and authentication to private NuGet repository
+
+View full Marketplace listing
+Installation
+Copy and paste the following snippet into your .yml file.
+
+Version: v1.8.1 
+- name: Setup .NET Core SDK
+  uses: actions/setup-dotnet@v1.8.1
+  with:
+    # Optional SDK version to use. If not provided, will install global.json version when available. Examples: 2.2.104, 3.1, 3.1.x
+    dotnet-version: # optional
+    # Optional package source for which to set up authentication. Will consult any existing NuGet.config in the root of the repo and provide a temporary NuGet.config using the NUGET_AUTH_TOKEN environment variable as a ClearTextPassword
+    source-url: # optional
+    # Optional OWNER for using packages from GitHub Package Registry organizations/users other than the current repository's owner. Only used if a GPR URL is also provided in source-url
+    owner: # optional
+    # Optional NuGet.config location, if your NuGet.config isn't located in the root of the repo.
+    config-file: # optional
+    # Whether prerelease versions should be matched with non-exact versions (for example 5.0.0-preview.6 being matched by 5, 5.0, 5.x or 5.0.x). Defaults to false if not provided.
+    include-prerelease: # optional
+    Getting started with a workflow
+To help you get started, this guide shows you some basic examples. For the full GitHub Actions documentation on workflows, see "Configuring workflows."
+
+Customizing when workflow runs are triggered
+Set your workflow to run on push events to the main and release/* branches
+
+on:
+  push:
+    branches:
+    - main
+    - release/*
+Set your workflow to run on pull_request events that target the main branch
+
+on:
+  pull_request:
+    branches:
+    - main
+Set your workflow to run every day of the week from Monday to Friday at 2:00 UTC
+
+on:
+  schedule:
+  - cron: "0 2 * * 1-5"
+For more information, see "Events that trigger workflows."
+
+Manually running a workflow
+To manually run a workflow, you can configure your workflow to use the workflow_dispatch event. This enables a "Run workflow" button on the Actions tab.
+
+on:
+  workflow_dispatch:
+For more information, see "Manually running a workflow."
+
+Running your jobs on different operating systems
+GitHub Actions provides hosted runners for Linux, Windows, and macOS.
+
+To set the operating system for your job, specify the operating system using runs-on:
+
+jobs:
+  my_job:
+    name: deploy to staging
+    runs-on: ubuntu-18.04
+The available virtual machine types are:
+
+ubuntu-latest, ubuntu-18.04, or ubuntu-16.04
+windows-latest or windows-2019
+macos-latest or macos-10.15
+For more information, see "Virtual environments for GitHub Actions."
+
+Using an action
+Actions are reusable units of code that can be built and distributed by anyone on GitHub. You can find a variety of actions in GitHub Marketplace, and also in the official Actions repository.
+
+To use an action, you must specify the repository that contains the action. We also recommend that you specify a Git tag to ensure you are using a released version of the action.
+
+- name: Setup Node
+  uses: actions/setup-node@v1
+  with:
+    node-version: '10.x'
+For more information, see "Workflow syntax for GitHub Actions."
+
+Running a command
+You can run commands on the job's virtual machine.
+
+- name: Install Dependencies
+  run: npm install
+For more information, see "Workflow syntax for GitHub Actions."
+
+Running a job across a matrix of operating systems and runtime versions
+You can automatically run a job across a set of different values, such as different versions of code libraries or operating systems.
+
+For example, this job uses a matrix strategy to run across 3 versions of Node and 3 operating systems:
+
+jobs:
+  test:
+    name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node_version: ['8', '10', '12']
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node_version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node_version }}
+
+    - name: npm install, build and test
+      run: |
+        npm install
+        npm run build --if-present
+        npm test
+For more information, see "Workflow syntax for GitHub Actions."
+
+Running steps or jobs conditionally
+GitHub Actions supports conditions on steps and jobs using data present in your workflow context.
+
+For example, to run a step only as part of a push and not in a pull_request, you can specify a condition in the if: property based on the event name:
+
+steps:
+- run: npm publish
+  if: github.event == 'push'
+For more information, see "Contexts and expression syntax for GitHub 
