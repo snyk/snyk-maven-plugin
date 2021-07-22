@@ -90,8 +90,9 @@ You must provide a Snyk API token to access Snyk's services. You can do so by:
 
 Default: `false`
 
-Skip this execution entirely. You can also use `-Dsnyk.skip` to toggle this
-behavior.
+Skip this execution entirely.
+
+When running `mvn`, you can also use `-Dsnyk.skip` to enable this behavior.
 
 ### `args` \[array\<string\>\]
 
@@ -129,6 +130,17 @@ You can configure the CLI in three different modes:
 - [Auto-Download and Update](#auto-download-and-update) (default)
 - [Custom CLI Executable](#custom-cli-executable)
 - [Specific CLI Version](#specific-cli-version)
+
+Follow the link for each mode to see which parameters are available.
+
+```xml
+<!-- Example CLI Configuration -->
+<configuration>
+  <cli>
+    <updatePolicy>daily</updatePolicy>
+  </cli>
+</configuration>
+```
 
 ### Auto-Download and Update
 
@@ -168,12 +180,16 @@ Path to a pre-installed Snyk CLI executable. You can find executables on the
 
 #### `version` \[string\]
 
-Example: `1.149.0`
+Example: `1.542.0`
 
 Specify if you want to use a specific version. You can find versions on the
 [Snyk CLI Releases page](https://github.com/snyk/snyk/releases).
 
 Setting this option will trigger a download of the CLI on every execution.
+
+## Demonstration
+
+To try out this plugin, see [the demo project](https://github.com/snyk/demo-snyk-maven-plugin).
 
 ## Migrating from Snyk Maven Plugin v1 to v2
 
