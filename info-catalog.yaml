@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  annotations:
+    github.com/project-slug: snyk/snyk-maven-plugin
+  description: A Snyk Vuln Scanner for Maven deps
+  tags:
+    - typescript
+    - plugin
+    - maven-deps
+  links:
+    - icon: message
+      title: "Team Asks Channel"
+      url: "https://snyk.slack.com/channels/ask-team-hammer"
+  name: snyk-maven-plugin
+spec:
+  lifecycle: unknown
+  type: service
+  owner: hammer
