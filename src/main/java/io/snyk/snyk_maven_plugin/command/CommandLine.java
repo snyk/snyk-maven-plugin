@@ -38,9 +38,7 @@ public interface CommandLine {
             pb.environment().put("FORCE_COLOR", "true");
         }
 
-        apiToken.ifPresent((t) -> {
-            pb.environment().put("SNYK_TOKEN", t);
-        });
+        apiToken.ifPresent((t) -> pb.environment().put("SNYK_TOKEN", t));
 
         return pb;
     }

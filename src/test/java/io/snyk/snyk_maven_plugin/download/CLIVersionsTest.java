@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CLIVersionsTest {
-    
+
     @Test
     public void acceptsVersion() {
         assertEquals("v1.456.3", CLIVersions.sanitize("1.456.3"));
