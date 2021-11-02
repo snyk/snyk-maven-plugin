@@ -11,7 +11,9 @@
   <packaging>maven-plugin</packaging>
 
   <name>Snyk Maven Plugin</name>
-  <description>Tests and monitors your Maven dependencies for vulnerabilities. This plugin is officially maintained by Snyk.io</description>
+  <description>Tests and monitors your Maven dependencies for vulnerabilities. This plugin is officially maintained by
+    Snyk.io
+  </description>
   <url>https://snyk.io</url>
 
   <licenses>
@@ -78,6 +80,11 @@
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-shared-utils</artifactId>
       <version>3.3.3</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.15</version>
     </dependency>
 
     <!-- Testing -->

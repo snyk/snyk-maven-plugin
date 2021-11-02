@@ -84,8 +84,6 @@ public abstract class SnykMojo extends ComposedMojo {
     }
 
     public File getDownloadDestination() {
-
-
         return Optional.ofNullable(cli).map(cli -> cli.downloadDestination).orElseGet(() -> {
             Map<String, String> environmentVariables = System.getenv();
             Optional<Path> homeDirectory = Optional.ofNullable(System.getProperty("user.home")).map(Paths::get);
