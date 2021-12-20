@@ -2,18 +2,22 @@ package io.snyk.snyk_maven_plugin.download;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.snyk.snyk_maven_plugin.download.UpdatePolicy.shouldUpdate;
 
 public class ExecutableDownloader {
 
-    private static final String SNYK_RELEASES_LATEST = "https://static.snyk.io/cli/%s/%s";
+    private static final String SNYK_CLI_DOWNLOAD_FORMAT = "https://static.snyk.io/cli/%s/%s";
 
     /**
      * Ensure that the CLI is downloaded and that it matches the corresponding `.sha256` file.
@@ -63,11 +67,28 @@ public class ExecutableDownloader {
         }
     }
 
+    static String downloadToString(URL url) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
+        String all = br.lines().collect(Collectors.joining("\n"));
+        return all;
+    }
+
+    public static String getLatestVersion() throws IOException {
+        String version = "v" + downloadToString(new URL("https://static.snyk.io/cli/latest/version")).trim();
+        return version;
+    }
+
     public static URL getDownloadUrl(Platform platform, String version) {
         try {
-            return new URL(String.format(SNYK_RELEASES_LATEST, version, platform.snykExecutableFileName));
+            if (version.equals("latest")) {
+                String actualLatestVersion = getLatestVersion();
+                return new URL(String.format(SNYK_CLI_DOWNLOAD_FORMAT, actualLatestVersion, platform.snykExecutableFileName));
+            }
+            return new URL(String.format(SNYK_CLI_DOWNLOAD_FORMAT, version, platform.snykExecutableFileName));
         } catch (MalformedURLException e) {
             throw new RuntimeException("Download URL is malformed", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed resolving 'latest' version", e);
         }
     }
 
