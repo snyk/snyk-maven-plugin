@@ -21,6 +21,9 @@ public abstract class SnykMojo extends ComposedMojo {
     private String apiToken;
 
     @Parameter
+    private String apiUrl;
+
+    @Parameter
     private List<String> args;
 
     @Parameter(property = "snyk.skip")
@@ -61,6 +64,10 @@ public abstract class SnykMojo extends ComposedMojo {
 
     public Optional<String> getApiToken() {
         return Optional.ofNullable(apiToken);
+    }
+
+    public Optional<String> getApiUrl() {
+        return Optional.ofNullable(apiUrl);
     }
 
     public Optional<File> getExecutable() {

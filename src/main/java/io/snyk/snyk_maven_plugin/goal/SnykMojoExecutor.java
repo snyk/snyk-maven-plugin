@@ -53,6 +53,7 @@ public class SnykMojoExecutor implements MojoExecutor {
                 executablePath,
                 mojo.getCommand(),
                 mojo.getApiToken(),
+                mojo.getApiUrl(),
                 mojo.getArguments(),
                 mojo.supportsColor()
             );
@@ -66,6 +67,7 @@ public class SnykMojoExecutor implements MojoExecutor {
         ProcessBuilder versionCommandLine = CommandLine.asProcessBuilder(
             executablePath,
             Command.VERSION,
+            Optional.empty(),
             Optional.empty(),
             emptyList(),
             false

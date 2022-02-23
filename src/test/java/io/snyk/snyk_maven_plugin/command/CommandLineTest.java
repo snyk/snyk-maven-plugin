@@ -18,6 +18,7 @@ public class CommandLineTest {
             "/path/to/cli",
             Command.TEST,
             Optional.empty(),
+            Optional.empty(),
             emptyList(),
             false
         );
@@ -37,6 +38,7 @@ public class CommandLineTest {
         ProcessBuilder pb = CommandLine.asProcessBuilder(
             "/path/to/cli",
             Command.TEST,
+            Optional.empty(),
             Optional.empty(),
             asList(
                 "--print-deps",
@@ -65,6 +67,7 @@ public class CommandLineTest {
             "/path/to/cli",
             Command.TEST,
             Optional.empty(),
+            Optional.empty(),
             singletonList("--integration-name=this-is-not-ok"),
             false
         );
@@ -85,6 +88,7 @@ public class CommandLineTest {
             "/path/to/cli",
             Command.TEST,
             Optional.empty(),
+            Optional.empty(),
             emptyList(),
             false
         );
@@ -100,6 +104,7 @@ public class CommandLineTest {
             "/path/to/cli",
             Command.TEST,
             Optional.of("fake-token"),
+            Optional.empty(),
             emptyList(),
             false
         );
@@ -115,6 +120,7 @@ public class CommandLineTest {
         ProcessBuilder pb = CommandLine.asProcessBuilder(
             "/path/to/cli",
             Command.TEST,
+            Optional.empty(),
             Optional.empty(),
             emptyList(),
             true

@@ -16,6 +16,7 @@ public interface CommandLine {
         String cliExecutablePath,
         Command command,
         Optional<String> apiToken,
+        Optional<String> apiUrl,
         List<String> args,
         boolean color
     ) {
@@ -39,6 +40,7 @@ public interface CommandLine {
         }
 
         apiToken.ifPresent((t) -> pb.environment().put("SNYK_TOKEN", t));
+        apiUrl.ifPresent((t) -> pb.environment().put("SNYK_API", t));
 
         return pb;
     }
