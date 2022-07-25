@@ -154,6 +154,9 @@ By default, the CLI will be automatically downloaded and updated for you.
 
 See [CLI Configuration](#cli-configuration).
 
+## Custom API Endpoint
+In order to configure a custom API endpoint, set the `SNYK_API` environment variable to the custom endpoint URL.
+
 ## CLI Configuration
 
 > ⚠️ For most use cases you don't need to set any `<cli>` options.
