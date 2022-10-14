@@ -55,6 +55,30 @@ officially maintained by [Snyk](https://snyk.io).
 
 ## Goals
 
+### `code-test` (experimental)
+
+Default phase: `test`
+
+Performs a static-analysis of your project's source code and provides a list of
+vulnerabilities if any are found.
+
+### `container-test` (experimental)
+
+Default phase: `install`
+
+Performs analysis of the layers of a container image.  The tag of the image to
+be scanned should be provided as an argument;
+
+```xml
+<!-- Example of specifying the tag of the image to scan -->
+<configuration>
+  <args>
+    <arg>--print-deps</arg>
+    <arg>nginx:1.9.5</arg>
+  </args>
+</configuration>
+```
+
 ### `test`
 
 Default Phase: `test`
@@ -93,6 +117,15 @@ Default: `false`
 Skip this execution entirely.
 
 When running `mvn`, you can also use `-Dsnyk.skip` to enable this behavior.
+
+### `failOnIssues` \[boolean\]
+
+Default: `true`
+
+When set to `true` then, should the Snyk CLI tool indicate that action is
+required to remedy a security issue, the Maven build will be considered
+failed.  When set to `false` the build will continue even if action is
+required.
 
 ### `args` \[array\<string\>\]
 
