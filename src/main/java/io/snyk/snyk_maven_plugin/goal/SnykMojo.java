@@ -26,6 +26,9 @@ public abstract class SnykMojo extends ComposedMojo {
     @Parameter(property = "snyk.skip")
     private boolean skip;
 
+    @Parameter(defaultValue = "true")
+    private boolean failOnIssues;
+
     @Parameter
     private CLI cli;
 
@@ -53,6 +56,10 @@ public abstract class SnykMojo extends ComposedMojo {
         color = MessageUtils.isColorEnabled();
         platform = Platform.current();
         executor = new SnykMojoExecutor(this);
+    }
+
+    public boolean getFailOnIssues() {
+        return failOnIssues;
     }
 
     public List<String> getArguments() {

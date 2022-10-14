@@ -1,10 +1,10 @@
 package io.snyk.snyk_maven_plugin.command;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public interface CommandLine {
 
@@ -19,18 +19,17 @@ public interface CommandLine {
         List<String> args,
         boolean color
     ) {
-        Stream<String> baseParts = Stream.of(
-            cliExecutablePath,
-            command.commandName(),
-            "--integration-name=" + INTEGRATION_NAME
-        );
+        List<String> parts = new ArrayList<>();
 
-        Stream<String> normalisedArgs = args.stream()
+        parts.add(cliExecutablePath);
+        Collections.addAll(parts, command.commandParameters());
+        parts.add("--integration-name=" + INTEGRATION_NAME);
+
+        args.stream()
             .map(String::trim)
-            .filter(arg -> !arg.startsWith("--integration-name"));
-
-        List<String> parts = Stream.concat(baseParts, normalisedArgs)
-            .collect(Collectors.toList());
+            .filter(arg -> !arg.isEmpty())
+            .filter(arg -> !arg.startsWith("--integration-name"))
+                .forEach(parts::add);
 
         ProcessBuilder pb = new ProcessBuilder(parts);
 

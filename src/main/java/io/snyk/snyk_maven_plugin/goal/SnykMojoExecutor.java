@@ -9,6 +9,7 @@ import io.snyk.snyk_maven_plugin.download.FileDownloader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 
 public class SnykMojoExecutor implements MojoExecutor {
+
+    private final static int EXIT_CODE_OK = 0;
+    private final static int EXIT_CODE_ACTION_NEEDED = 1;
 
     private final SnykMojo mojo;
 
@@ -33,8 +37,20 @@ public class SnykMojoExecutor implements MojoExecutor {
         }
 
         int exitCode = executeCommand();
-        if (exitCode != 0) {
-            throw new MojoFailureException("snyk command exited with non-zero exit code (" + exitCode + "). See output for details.");
+
+        switch (exitCode) {
+            case EXIT_CODE_OK:
+                break;
+            case EXIT_CODE_ACTION_NEEDED:
+                if (!mojo.getFailOnIssues()) {
+                    mojo.getLog().warn("snyk " + mojo.getCommand().commandName()
+                            + " did find issues, but the plugin is configured"
+                            + " to not fail in this situation.");
+                    break;
+                }
+            default:
+                throw new MojoFailureException("snyk command exited with non-zero exit code ("
+                        + exitCode + "). See output for details.");
         }
     }
 
@@ -55,11 +71,27 @@ public class SnykMojoExecutor implements MojoExecutor {
                 mojo.getApiToken(),
                 mojo.getArguments(),
                 mojo.supportsColor()
-            );
+            ).directory(getProjectRootDirectory());
+
+            if (log.isDebugEnabled()) {
+                log.debug("Snyk Command: "
+                        + String.join(" ", commandLine.command()));
+            }
+
             return CommandRunner.run(commandLine::start, log::info, log::error);
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
+    }
+
+    private File getProjectRootDirectory() {
+        MavenProject project = (MavenProject) mojo.getPluginContext().get("project");
+
+        if (project == null) {
+            throw new IllegalStateException("the `project` is missing from the plugin context");
+        }
+
+        return project.getBasedir();
     }
 
     private String getVersion(String executablePath) {
