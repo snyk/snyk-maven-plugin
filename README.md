@@ -5,8 +5,7 @@
 [![Maven Release](https://img.shields.io/maven-central/v/io.snyk/snyk-maven-plugin)](https://search.maven.org/artifact/io.snyk/snyk-maven-plugin)
 [![Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/snyk/snyk-maven-plugin.svg)](https://snyk.io)
 
-Tests and monitors your Maven dependencies for vulnerabilities. This plugin is
-officially maintained by [Snyk](https://snyk.io).
+Tests and monitors your Maven dependencies for vulnerabilities. This plugin is officially maintained by [Snyk](https://snyk.io).
 
 ## Installation
 
