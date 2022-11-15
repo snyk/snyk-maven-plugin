@@ -46,27 +46,22 @@ jobs:
         if: ${{ matrix.os == 'windows' }}
         run: npm install -g snyk
 
-      # - name: Run Acceptance Tests (Ubuntu/macOS)
-      #   if: ${{ matrix.os != 'windows' }}
-      #   run: mvn -B invoker:install invoker:run
-      #   env:
-      #     SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
-      #     SNYK_CLI_EXECUTABLE: /usr/local/bin/snyk
-      #     SNYK_DOWNLOAD_DESTINATION: "downloads/snyk"
-
-      # - name: Run Acceptance Tests (Windows)
-      #   if: ${{ matrix.os == 'windows' }}
-      #   run: mvn -B invoker:install invoker:run
-      #   env:
-      #     SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
-      #     SNYK_CLI_EXECUTABLE: "C:\\npm\\prefix\\snyk.cmd"
-      #     SNYK_DOWNLOAD_DESTINATION: "downloads\\snyk.exe"
-
-      # - name: Show Integration Test build.log files
-      #   if: ${{ failure() }}
-      #   run: cat target/it/**/build.log
-
-      - name: Run snyk container test
-        run: snyk container test mongo:4.4-rc
+      - name: Run Acceptance Tests (Ubuntu/macOS)
+        if: ${{ matrix.os != 'windows' }}
+        run: mvn -B invoker:install invoker:run
         env:
-          SNYK_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
+          SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
+          SNYK_CLI_EXECUTABLE: /usr/local/bin/snyk
+          SNYK_DOWNLOAD_DESTINATION: "downloads/snyk"
+
+      - name: Run Acceptance Tests (Windows)
+        if: ${{ matrix.os == 'windows' }}
+        run: mvn -B invoker:install invoker:run
+        env:
+          SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
+          SNYK_CLI_EXECUTABLE: "C:\\npm\\prefix\\snyk.cmd"
+          SNYK_DOWNLOAD_DESTINATION: "downloads\\snyk.exe"
+
+      - name: Show Integration Test build.log files
+        if: ${{ failure() }}
+        run: cat target/it/**/build.log
