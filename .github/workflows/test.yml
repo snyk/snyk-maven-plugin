@@ -68,3 +68,5 @@ jobs:
 
       - name: Run snyk container test
         run: snyk container test nginx:1.21.1
+        env:
+          SNYK_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
