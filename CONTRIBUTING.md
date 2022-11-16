@@ -46,3 +46,19 @@ Ensure that your code adheres to the included `.eslintrc` config by running `npm
 *Important:* when fixing a bug, please commit a **failing test** first so that Travis CI (or I can) can show the code failing. Once that commit is in place, then commit the bug fix, so that we can test *before* and *after*.
 
 Remember that you're developing for multiple platforms and versions of node, so if the tests pass on your Mac or Linux or Windows machine, it *may* not pass elsewhere.
+
+## Local Build
+
+During the build of this plugin, a number of tests will run in the host platform's environment.  To get these tests to run from a developer setting requires some environment variables to be set;
+
+### `SNYK_DOWNLOAD_DESTINATION`
+
+This value is a file path where the test is able to download the Snyk binary to for use in the test.  An example might be `downloads/snyk`.
+
+### `SNYK_TEST_TOKEN`
+
+A Snyk token that can be used in the execution of the test.  You can obtain a token for your Snyk user under the "Account Settings" page in the Snyk Web UI.
+
+### `SNYK_CLI_EXECUTABLE`
+
+The path where the Snyk tool would ordinarily be found on the system.  An example would be `/usr/local/bin/snyk`.

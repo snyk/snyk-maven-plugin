@@ -14,8 +14,8 @@ if (!log.contains("child-module-2 ..................................... FAILURE"
     throw new Exception("child-module-2 should have failed.");
 }
 
-if (!log.contains("introduced by io.snyk.it:child-module-2@1.0-SNAPSHOT > axis:axis@1.4")) {
-    throw new Exception("Could not find vulnerability in child-module-2.");
+if (!log.contains("introduced by axis:axis@1.4")) {
+    throw new Exception("Could not find expected vulnerability in child-module-2.");
 }
 
 return true;

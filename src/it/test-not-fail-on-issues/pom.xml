@@ -4,11 +4,21 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.snyk.it</groupId>
-  <artifactId>test-with-specific-cli-version</artifactId>
+  <artifactId>test-not-fail-on-issues</artifactId>
   <version>1.0-SNAPSHOT</version>
+
+  <dependencies>
+    <!-- this contains a known vulnerability -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.3.5</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
+
       <plugin>
         <groupId>@project.groupId@</groupId>
         <artifactId>@project.artifactId@</artifactId>
@@ -22,13 +32,17 @@
           </execution>
         </executions>
         <configuration>
-          <apiToken>${env.SNYK_TEST_TOKEN}</apiToken>
           <cli>
-            <version>1.487.0</version>
-            <downloadDestination>${env.SNYK_DOWNLOAD_DESTINATION}</downloadDestination>
+            <executable>${env.SNYK_CLI_EXECUTABLE}</executable>
           </cli>
+          <args>
+            <arg>--print-deps</arg>
+          </args>
+          <apiToken>${env.SNYK_TEST_TOKEN}</apiToken>
+          <failOnIssues>false</failOnIssues>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 </project>
