@@ -32,21 +32,6 @@ Must be one of the following:
 
 To release a major you need to add `BREAKING CHANGE: ` to the start of the body and the detail of the breaking change.
 
-## Code standards
-
-Ensure that your code adheres to the included `.eslintrc` config by running `npm run lint`.
-
-## Sending pull requests
-
-- new command line options are generally discouraged unless there's a *really* good reason
-- add tests for newly added code (and try to mirror directory and file structure if possible)
-- spell check
-- PRs will not be code reviewed unless all tests are passing
-
-*Important:* when fixing a bug, please commit a **failing test** first so that Travis CI (or I can) can show the code failing. Once that commit is in place, then commit the bug fix, so that we can test *before* and *after*.
-
-Remember that you're developing for multiple platforms and versions of node, so if the tests pass on your Mac or Linux or Windows machine, it *may* not pass elsewhere.
-
 ## Local Build
 
 During the build of this plugin, a number of tests will run in the host platform's environment.  To get these tests to run from a developer setting requires some environment variables to be set;
@@ -62,3 +47,39 @@ A Snyk token that can be used in the execution of the test.  You can obtain a to
 ### `SNYK_CLI_EXECUTABLE`
 
 The path where the Snyk tool would ordinarily be found on the system.  An example would be `/usr/local/bin/snyk`.
+
+
+## Release
+
+To release the plugin from your local machine, perform the following steps.
+
+When releasing the first time, you need to import the GPG key and add Maven repository credentials to your local machine. If you have done this, you can skip to step 4.
+1. Download GPG keys for Maven Central from the password manager.
+2. Run `gpg --import maven-master.gpg` and `gpg --import maven-signing.gpg` for the downloaded keys.
+3. Populate your `~/.m2/settings.xml` with the following content, replacing ID and password using "Sonatype JIRA" credentials from the password manager:
+```xml
+<settings>
+  <servers>
+    <server>
+      <id>ossrh</id>
+      <username>your-jira-id</username>
+      <password>your-jira-pwd</password>
+    </server>
+  </servers>
+</settings>
+```
+4. Run `mvn versions:set -DnewVersion=1.2.3` to set `pom.xml` to the desired version to be released.
+5. Ensure the build and tests pass, then trigger release using `mvn clean deploy -P release`.
+6. Upon successful completion of Step 5, navigate to [Sonatype](https://oss.sonatype.org)
+5. Click on [Staging Repositories](https://oss.sonatype.org/#)
+6. Select `iosnyk-xxxx`
+7. Click on `Close`. If this not available, perform Step 10.
+8. Wait for the Close activity to finish (takes about 10 min)
+9. Select `iosnyk-xxxx` staging repository again
+10. Click on `Release` (takes about 10 min)
+
+The released version should be available in the [Released repository](https://repo.maven.apache.org/maven2/io/snyk/snyk-maven-plugin/) now. It can take some time to update [Maven Central Repository](https://central.sonatype.dev/artifact/io.snyk/snyk-maven-plugin/2.2.0/versions).
+
+11. Add new release in GitHub manually to create new tag and have better visibility.
+
+If you have questions, consult [the official documentation](https://central.sonatype.org/publish/publish-maven) for publishing information.
