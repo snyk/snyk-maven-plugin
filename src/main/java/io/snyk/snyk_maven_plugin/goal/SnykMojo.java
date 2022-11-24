@@ -30,6 +30,9 @@ public abstract class SnykMojo extends ComposedMojo {
     private boolean failOnIssues;
 
     @Parameter
+    private String outputFile;
+
+    @Parameter
     private CLI cli;
 
     public static class CLI {
@@ -60,6 +63,10 @@ public abstract class SnykMojo extends ComposedMojo {
 
     public boolean getFailOnIssues() {
         return failOnIssues;
+    }
+
+    public String getOutputFile() {
+        return outputFile;
     }
 
     public List<String> getArguments() {

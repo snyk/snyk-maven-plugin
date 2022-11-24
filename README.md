@@ -110,6 +110,14 @@ You must provide a Snyk API token to access Snyk's services. You can do so by:
 - Providing a `SNYK_TOKEN` environment variable.
 - Authenticating via `snyk auth` using the Snyk CLI before using this plugin.
 
+### `outputFile` \[string\]
+
+Default: `null`
+
+If present, the output from the Snyk CLI tool is written to this path as well
+as the console.  If the parent directory for the file does not exist, then it
+will be created.  The default behavior is to output only to the console.
+
 ### `skip` \[boolean\]
 
 Default: `false`

@@ -11,7 +11,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -65,12 +71,16 @@ public class SnykMojoExecutor implements MojoExecutor {
             log.info("Snyk Executable Path: " + executablePath);
             log.info("Snyk CLI Version:     " + getVersion(executablePath));
 
+            String outputFilename = Optional.ofNullable(mojo.getOutputFile())
+                    .filter(s -> !s.isEmpty())
+                    .orElse(null);
+
             ProcessBuilder commandLine = CommandLine.asProcessBuilder(
                 executablePath,
                 mojo.getCommand(),
                 mojo.getApiToken(),
                 mojo.getArguments(),
-                mojo.supportsColor()
+                mojo.supportsColor() && null == outputFilename
             ).directory(getProjectRootDirectory());
 
             if (log.isDebugEnabled()) {
@@ -78,7 +88,37 @@ public class SnykMojoExecutor implements MojoExecutor {
                         + String.join(" ", commandLine.command()));
             }
 
-            return CommandRunner.run(commandLine::start, log::info, log::error);
+            if (null == outputFilename) {
+                return CommandRunner.run(commandLine::start, log::info, log::error);
+            }
+
+            File outputFile = new File(outputFilename).getAbsoluteFile();
+            ensureDirExists(outputFile.getParentFile());
+
+            try (
+                    FileOutputStream outputStream = new FileOutputStream(outputFilename);
+                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
+                            outputStream, StandardCharsets.UTF_8);
+                    BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)
+            ) {
+                LineLogger infoAndOutputCaptureLineLogger = new CommandRunner.CompositeLineLogger(
+                        log::info,
+                        l -> {
+                            try {
+                                bufferedWriter.write(l);
+                                bufferedWriter.newLine();
+                            }
+                            catch (IOException ioe) {
+                                throw new UncheckedIOException("unable to write the command output", ioe);
+                            }
+                        }
+                );
+
+                return CommandRunner.run(
+                        commandLine::start,
+                        infoAndOutputCaptureLineLogger,
+                        log::error);
+            }
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
@@ -115,6 +155,23 @@ public class SnykMojoExecutor implements MojoExecutor {
             mojo.getUpdatePolicy(),
             FileDownloader::downloadFile
         );
+    }
+
+    private static void ensureDirExists(File file) {
+        if (null == file) {
+            // this will be the case if the file is at the top level such that there
+            // is no parent directory.
+            return;
+        }
+        if (!file.exists()) {
+            if (!file.mkdirs()) {
+                throw new RuntimeException("unable to create the directory [" + file.getAbsolutePath() + "]");
+            }
+        } else {
+            if (!file.isDirectory()) {
+                throw new RuntimeException("expected [" + file.getAbsolutePath() + "] to be a directory");
+            }
+        }
     }
 
 }

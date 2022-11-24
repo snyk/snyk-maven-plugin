@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class CommandRunner {
 
@@ -25,6 +26,20 @@ public class CommandRunner {
 
     public interface LineLogger {
         void log(String line);
+    }
+
+    public static class CompositeLineLogger implements LineLogger {
+
+        private final LineLogger[] delegates;
+
+        public CompositeLineLogger(LineLogger ...delegates) {
+            this.delegates = delegates;
+        }
+
+        @Override
+        public void log(String line) {
+            Arrays.stream(delegates).forEach(d -> d.log(line));
+        }
     }
 
 }
