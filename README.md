@@ -181,7 +181,7 @@ Follow the link for each mode to see which parameters are available.
 
 Default: `daily`
 
-How often to download the latest CLI release. Can be one of the following:
+How often to download the latest CLI release. Snyk recommends always keeping your CLI installation updated to the latest version. Can be one of the following:
 
 - `daily` - On the first execution of the day.
 - `always` - On every execution.
