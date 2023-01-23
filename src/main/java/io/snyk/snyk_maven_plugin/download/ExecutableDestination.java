@@ -30,6 +30,7 @@ public class ExecutableDestination {
                     .orElseThrow(() -> new MissingContextException("Windows needs APPDATA directory."));
             }
             case LINUX:
+            case LINUX_ARM64:
             case LINUX_ALPINE: {
                 return Optional.ofNullable(env.get("XDG_DATA_HOME"))
                     .map(Paths::get)
