@@ -10,7 +10,7 @@ officially maintained by [Snyk](https://snyk.io).
 
 ## Installation
 
-1. [Get your Snyk API token.](https://support.snyk.io/hc/en-us/articles/360004037537-Authentication-for-third-party-tools)
+1. [Get your Snyk API token.](https://support.snyk.io/hc/en-us/articles/360004037537-Authentication-for-third-party-tools).
 
 2. Add the Snyk Maven Plugin to your `pom.xml` and configure it as needed.
 
@@ -66,7 +66,7 @@ vulnerabilities if any are found.
 
 Default phase: `install`
 
-Performs analysis of the layers of a container image.  The tag of the image to
+Performs analysis of the layers of a container image. The tag of the image to
 be scanned should be provided as an argument;
 
 ```xml
@@ -124,7 +124,7 @@ Default: `true`
 
 When set to `true` then, should the Snyk CLI tool indicate that action is
 required to remedy a security issue, the Maven build will be considered
-failed.  When set to `false` the build will continue even if action is
+failed. When set to `false` the build will continue even if action is
 required.
 
 ### `args` \[array\<string\>\]
