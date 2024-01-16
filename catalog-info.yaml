@@ -4,8 +4,8 @@ metadata:
   name: snyk-maven-plugin
   annotations:
     github.com/project-slug: snyk/snyk-maven-plugin
-    github.com/team-slug: snyk/hammerhead
+    github.com/team-slug: snyk/cli
 spec:
   type: supply-chain-tooling
   lifecycle: "-"
-  owner: hammerhead
+  owner: cli
