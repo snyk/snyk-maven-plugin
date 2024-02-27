@@ -7,7 +7,7 @@ jobs:
   security-scans:
     resource_class: small
     docker:
-      - image: cimg/base:stable
+      - image: cimg/openjdk:21.0
     steps:
       - checkout
       - prodsec/security_scans:
