@@ -41,7 +41,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.sourceCompatibility>1.8</project.sourceCompatibility>
     <project.targetCompatibility>1.8</project.targetCompatibility>
-    <maven.version>3.6.3</maven.version>
+    <maven.version>3.8.1</maven.version>
   </properties>
 
   <dependencies>
