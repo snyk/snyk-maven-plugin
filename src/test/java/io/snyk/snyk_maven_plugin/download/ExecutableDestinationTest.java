@@ -119,7 +119,31 @@ public class ExecutableDestinationTest {
     }
 
     @Test
-    public void alplineThrowsIfXgdNotSetAndHomeDirNotSet() {
+    public void worksLinuxArm64XgdSet() {
+        Platform platform = Platform.LINUX_ARM64;
+        Map<String, String> env = new HashMap<>();
+        env.put("XDG_DATA_HOME", "/user/foo/xgd");
+        File destination = ExecutableDestination.getDownloadDestination(platform, Optional.empty(), env);
+        assertEquals(
+                toUnixPath(destination),
+                "/user/foo/xgd/snyk/snyk-linux-arm64"
+        );
+    }
+
+    @Test
+    public void worksLinuxArm64NotSet() {
+        Platform platform = Platform.LINUX_ARM64;
+        Optional<Path> maybeHomeDir = Optional.of(Paths.get("/user/foo"));
+        Map<String, String> env = new HashMap<>();
+        File destination = ExecutableDestination.getDownloadDestination(platform, maybeHomeDir, env);
+        assertEquals(
+                toUnixPath(destination),
+                "/user/foo/.local/share/snyk/snyk-linux-arm64"
+        );
+    }
+
+    @Test
+    public void alpineThrowsIfXgdNotSetAndHomeDirNotSet() {
         Platform platform = Platform.LINUX_ALPINE;
         Optional<Path> missingHomeDir = Optional.empty(); // can't get home directory
         Map<String, String> env = new HashMap<>(); // no XDG_DATA_HOME
