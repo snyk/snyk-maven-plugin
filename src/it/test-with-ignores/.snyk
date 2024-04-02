@@ -2,6 +2,22 @@
 version: v1.19.0
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+  SNYK-JAVA-AXIS-3124809:
+    - 'axis:axis':
+        reason: Ignoring for tests
+        expires: 2121-04-15T13:06:22.000Z
+  SNYK-JAVA-AXIS-3172898:
+    - 'axis:axis':
+        reason: Ignoring for tests
+        expires: 2121-04-15T13:06:25.000Z
+  SNYK-JAVA-AXIS-5898629:
+    - 'axis:axis':
+        reason: Ignoring for tests
+        expires: 2121-04-15T13:06:28.000Z
+  SNYK-JAVA-AXIS-6145990:
+    - 'axis:axis':
+        reason: Ignoring for tests
+        expires: 2121-04-15T13:06:31.000Z
   SNYK-JAVA-AXIS-30071:
     - 'axis:axis':
         reason: Ignoring for tests
