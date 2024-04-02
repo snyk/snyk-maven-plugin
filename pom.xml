@@ -221,7 +221,7 @@
             <pomInclude>*/pom.xml</pomInclude>
           </pomIncludes>
           <pomExcludes>
-            <pomExclude>test-container-test/pom.xml</pomExclude>
+            <pomExclude>${env.POM_EXCLUDE_PATTERN}</pomExclude>
           </pomExcludes>
           <preBuildHookScript>setup</preBuildHookScript>
           <postBuildHookScript>verify</postBuildHookScript>

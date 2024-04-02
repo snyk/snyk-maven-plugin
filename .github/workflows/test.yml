@@ -59,6 +59,7 @@ jobs:
         if: ${{ matrix.os == 'windows' }}
         run: mvn -B invoker:install invoker:run
         env:
+          POM_EXCLUDE_PATTERN: "test-container-test/pom.xml"
           SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
           SNYK_CLI_EXECUTABLE: "C:\\npm\\prefix\\snyk.cmd"
           SNYK_DOWNLOAD_DESTINATION: "downloads\\snyk.exe"
