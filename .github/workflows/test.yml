@@ -12,14 +12,15 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
-          java-version: 8
+          distribution: 'zulu'
+          java-version: '8'
 
       - name: Cache Local Maven Repository
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.m2/repository
@@ -58,6 +59,7 @@ jobs:
         if: ${{ matrix.os == 'windows' }}
         run: mvn -B invoker:install invoker:run
         env:
+          POM_EXCLUDE_PATTERN: "test-container-test/pom.xml"
           SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
           SNYK_CLI_EXECUTABLE: "C:\\npm\\prefix\\snyk.cmd"
           SNYK_DOWNLOAD_DESTINATION: "downloads\\snyk.exe"

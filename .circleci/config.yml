@@ -12,6 +12,7 @@ jobs:
       - checkout
       - prodsec/security_scans:
           mode: auto
+          open-source-additional-arguments: --exclude=it
 
 workflows:
   CICD:
