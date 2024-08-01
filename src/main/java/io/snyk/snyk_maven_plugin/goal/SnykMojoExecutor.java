@@ -109,8 +109,8 @@ public class SnykMojoExecutor implements MojoExecutor {
     }
 
     private File downloadExecutable() {
-        return ExecutableDownloader.ensure(
-            mojo.getDownloadUrl(),
+        return ExecutableDownloader.iterateAndEnsure(
+            mojo.getDownloadUrls(),
             mojo.getDownloadDestination(),
             mojo.getUpdatePolicy(),
             FileDownloader::downloadFile

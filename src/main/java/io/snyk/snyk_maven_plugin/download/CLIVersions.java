@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CLIVersions {
-    public static final String LATEST_VERSION_KEYWORD = "latest";
+    public static final String STABLE_VERSION_KEYWORD = "stable";
 
     static final Pattern versionRegex = Pattern.compile("^(?:\\d+\\.){2}\\d+$");
 
