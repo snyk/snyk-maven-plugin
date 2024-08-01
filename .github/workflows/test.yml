@@ -48,14 +48,25 @@ jobs:
 
       - name: Install Snyk CLI (Windows)
         if: ${{ matrix.os == 'windows' }}
-        run: npm install -g snyk
+        run: |
+          npm install -g snyk
+          snyk -v
+          where snyk
 
-      - name: Run Acceptance Tests (Ubuntu/macOS)
-        if: ${{ matrix.os != 'windows' }}
+      - name: Run Acceptance Tests (Ubuntu)
+        if: ${{ matrix.os == 'ubuntu' }}
         run: mvn -B invoker:install invoker:run
         env:
           SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
           SNYK_CLI_EXECUTABLE: /usr/local/bin/snyk
+          SNYK_DOWNLOAD_DESTINATION: "downloads/snyk"
+
+      - name: Run Acceptance Tests (macOS)
+        if: ${{ matrix.os == 'macos' }}
+        run: mvn -B invoker:install invoker:run
+        env:
+          SNYK_TEST_TOKEN: ${{secrets.SNYK_TEST_TOKEN}}
+          SNYK_CLI_EXECUTABLE: /opt/homebrew/bin/snyk
           SNYK_DOWNLOAD_DESTINATION: "downloads/snyk"
 
       - name: Run Acceptance Tests (Windows)
