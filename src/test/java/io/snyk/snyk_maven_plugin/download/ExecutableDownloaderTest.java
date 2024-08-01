@@ -1,7 +1,6 @@
 package io.snyk.snyk_maven_plugin.download;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +10,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.snyk.snyk_maven_plugin.download.ExecutableDownloader.ensure;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class ExecutableDownloaderTest {
 
@@ -33,7 +32,7 @@ public class ExecutableDownloaderTest {
             }
         };
 
-        RuntimeException e = assertThrows(RuntimeException.class, () -> ExecutableDownloader.ensure(
+        RuntimeException e = assertThrows(RuntimeException.class, () -> ensure(
             new URL("https://static.snyk.io/cli/stable/snyk-macos"),
             cliFile,
             "never",
@@ -46,22 +45,33 @@ public class ExecutableDownloaderTest {
     @Test
     public void iteratesToNextURLOnDownloadFailure() throws Exception {
         // Mock objects
-        FileDownloader downloader = Mockito.mock(FileDownloader.class);
-        File cliFile = new File("test.cli");
+        File cliFile = new File("snyk-macos");
+        FileDownloader mockDownloader = (URL url, File target) -> {
+            if (url.toString().contains("https://fail.download/")) {
+                throw new IOException("mock download failure");
+            }
+            if (url.toString().equals("https://static.snyk.io/cli/stable/snyk-macos.sha256")) {
+                Files.write(
+                        target.toPath(),
+                        "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9  snyk-macos".getBytes()
+                );
+            }
+            if (url.toString().equals("https://static.snyk.io/cli/stable/snyk-macos")) {
+                Files.write(
+                        target.toPath(),
+                        "hello world".getBytes()
+                );
+            }
+        };
 
         // Prepare test data
-        URL url1 = new URL("https://fail.download/cli1");
-        URL url2 = new URL("https://successful.download/cli2");
+        URL url1 = new URL("https://fail.download/cli/stable/snyk-macos");
+        URL url2 = new URL("https://static.snyk.io/cli/stable/snyk-macos");
+
         List<URL> urls = Arrays.asList(url1, url2);
 
-        // Mock download failure for the first URL
-        doThrow(new IOException("mock download failure")).when(downloader).download(url1, cliFile);
-
-        // Mock successful download for the second URL
-        doNothing().when(downloader).download(url2, cliFile);
-
         // Call the method
-        File result = ExecutableDownloader.iterateAndEnsure(urls, cliFile, "never", downloader);
+        File result = ExecutableDownloader.iterateAndEnsure(urls, cliFile, "never", mockDownloader);
 
         // Verify that the downloaded file exists (from the second URL)
         assertEquals(cliFile, result);

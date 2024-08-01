@@ -42,19 +42,21 @@ public class ExecutableDownloader {
 
             if (cliFile.exists() && checksumFile.exists()) {
                 if (verifyChecksum(cliFile, checksumFile)) {
-                    if (!shouldUpdate(
+                    if (shouldUpdate(
                         updatePolicy,
                         cliFile.lastModified(),
                         System.currentTimeMillis()
                     )) {
+                        // cli exists, checksum verified, but cli is stale and needs updating
+                        cliFile.delete();
+                        checksumFile.delete();
+                        cliFile.getParentFile().mkdirs();
+                    } else {
+                        // cli exists, checksum verified, cli is not stale and does not need updating
                         return cliFile;
                     }
                 }
             }
-
-            cliFile.delete();
-            checksumFile.delete();
-            cliFile.getParentFile().mkdirs();
 
             downloader.download(cliDownloadURL, cliFile);
 
@@ -85,7 +87,6 @@ public class ExecutableDownloader {
      * @return
      */
     public static File iterateAndEnsure(List<URL> cliDownloadURLs, File cliFile, String updatePolicy, FileDownloader downloader) {
-        System.out.println("Iterating and downloading " + cliDownloadURLs.toString());
         for (URL cliDownloadURL : cliDownloadURLs) {
             try {
                 File downloadedFile = ensure(cliDownloadURL, cliFile, updatePolicy, downloader);
