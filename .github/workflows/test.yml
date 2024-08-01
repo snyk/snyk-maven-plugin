@@ -30,7 +30,7 @@ jobs:
 
       - name: Install Maven for Acceptance Tests
         run: |
-          mvn -N "io.takari:maven:0.7.7:wrapper" "-Dmaven=${{matrix.maven_version}}"
+          mvn -N "wrapper:wrapper" "-Dmaven=${{matrix.maven_version}}"
           ./mvnw --version
 
       - name: Install Plugin to .m2
@@ -41,7 +41,10 @@ jobs:
 
       - name: Install Snyk CLI (Ubuntu/macOS)
         if: ${{ matrix.os != 'windows' }}
-        run: sudo npm install -g snyk
+        run: |
+          sudo npm install -g snyk
+          snyk -v
+          which snyk
 
       - name: Install Snyk CLI (Windows)
         if: ${{ matrix.os == 'windows' }}
