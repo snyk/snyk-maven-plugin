@@ -14,6 +14,9 @@ import static io.snyk.snyk_maven_plugin.download.ExecutableDownloader.ensure;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ExecutableDownloaderTest {
+    private final byte[] incorrectShasum = "0000000000000000000000000000000000000000000000000000000000000000  snyk-macos".getBytes();
+    private final byte[] helloWorldShasum = "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9  snyk-macos".getBytes();
+    private final byte[] helloWorldBytes = "hello world".getBytes();
 
     @Test
     public void throwsWhenShaDoesntMatch() throws Exception {
@@ -23,12 +26,9 @@ public class ExecutableDownloaderTest {
 
         FileDownloader mockDownloader = (URL url, File target) -> {
             if (url.toString().equals("https://static.snyk.io/cli/stable/snyk-macos.sha256")) {
-                Files.write(
-                    target.toPath(),
-                    "0000000000000000000000000000000000000000000000000000000000000000  snyk-macos".getBytes()
-                );
+                Files.write(target.toPath(), incorrectShasum);
             } else {
-                FileDownloader.downloadFile(url, target);
+                Files.write(target.toPath(), helloWorldBytes);
             }
         };
 
@@ -51,16 +51,10 @@ public class ExecutableDownloaderTest {
                 throw new IOException("mock download failure");
             }
             if (url.toString().equals("https://static.snyk.io/cli/stable/snyk-macos.sha256")) {
-                Files.write(
-                        target.toPath(),
-                        "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9  snyk-macos".getBytes()
-                );
+                Files.write(target.toPath(), helloWorldShasum);
             }
             if (url.toString().equals("https://static.snyk.io/cli/stable/snyk-macos")) {
-                Files.write(
-                        target.toPath(),
-                        "hello world".getBytes()
-                );
+                Files.write(target.toPath(), helloWorldBytes);
             }
         };
 
