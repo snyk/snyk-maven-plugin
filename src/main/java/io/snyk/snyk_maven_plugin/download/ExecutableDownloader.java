@@ -54,7 +54,6 @@ public class ExecutableDownloader {
 
             cliFile.delete();
             checksumFile.delete();
-            cliFile.getParentFile().mkdirs();
 
             downloader.download(cliDownloadURL, cliFile);
 
