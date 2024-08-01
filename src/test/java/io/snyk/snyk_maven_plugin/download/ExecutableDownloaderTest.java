@@ -45,7 +45,10 @@ public class ExecutableDownloaderTest {
     @Test
     public void iteratesToNextURLOnDownloadFailure() throws Exception {
         // Mock objects
-        File cliFile = new File("snyk-macos");
+        Path tempDirectory = Files.createTempDirectory(getClass().getSimpleName());
+        Path cliPath = tempDirectory.resolve("snyk-macos");
+        File cliFile = new File(cliPath.toString());
+
         FileDownloader mockDownloader = (URL url, File target) -> {
             if (url.toString().contains("https://fail.download/")) {
                 throw new IOException("mock download failure");

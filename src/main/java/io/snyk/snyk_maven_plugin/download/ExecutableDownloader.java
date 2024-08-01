@@ -43,9 +43,9 @@ public class ExecutableDownloader {
             if (cliFile.exists() && checksumFile.exists()) {
                 if (verifyChecksum(cliFile, checksumFile)) {
                     if (!shouldUpdate(
-                            updatePolicy,
-                            cliFile.lastModified(),
-                            System.currentTimeMillis()
+                        updatePolicy,
+                        cliFile.lastModified(),
+                        System.currentTimeMillis()
                     )) {
                         return cliFile;
                     }
@@ -54,6 +54,7 @@ public class ExecutableDownloader {
 
             cliFile.delete();
             checksumFile.delete();
+            cliFile.getParentFile().mkdirs();
 
             downloader.download(cliDownloadURL, cliFile);
 
@@ -92,7 +93,7 @@ public class ExecutableDownloader {
                     return downloadedFile;
                 }
             } catch (RuntimeException e) {
-                System.err.println("Failed to download from '" + cliDownloadURL + "': " + e.getMessage());
+                System.err.println("Failed to download from '" + cliDownloadURL + "': " + e);
             }
         }
         throw new RuntimeException("Failed to download from URLs");
