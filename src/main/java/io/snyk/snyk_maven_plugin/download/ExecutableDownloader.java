@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import static io.snyk.snyk_maven_plugin.download.UpdatePolicy.shouldUpdate;
 
 public class ExecutableDownloader {
-
+    public static final String SNYK_INTEGRATION_NAME = "MAVEN_PLUGIN";
     private static final String SNYK_CLI_DOWNLOAD_PRIMARY = "https://downloads.snyk.io/cli/%s/%s";
     private static final String SNYK_CLI_DOWNLOAD_SECONDARY = "https://static.snyk.io/cli/%s/%s";
     private static final List<String> SNYK_CLI_DOWNLOAD_URLS = Arrays.asList(SNYK_CLI_DOWNLOAD_PRIMARY, SNYK_CLI_DOWNLOAD_SECONDARY);
@@ -56,9 +56,10 @@ public class ExecutableDownloader {
             checksumFile.delete();
             cliFile.getParentFile().mkdirs();
 
-            downloader.download(cliDownloadURL, cliFile);
+            URL cliUrlWithUtm = new URL(cliDownloadURL.toString() + "?utm_source=" + SNYK_INTEGRATION_NAME);
+            downloader.download(cliUrlWithUtm, cliFile);
 
-            URL checksumUrl = new URL(cliDownloadURL.toString() + ".sha256");
+            URL checksumUrl = new URL(cliDownloadURL.toString() + ".sha256" + "?utm_source=" + SNYK_INTEGRATION_NAME);
             downloader.download(checksumUrl, checksumFile);
 
             if (!verifyChecksum(cliFile, checksumFile)) {
