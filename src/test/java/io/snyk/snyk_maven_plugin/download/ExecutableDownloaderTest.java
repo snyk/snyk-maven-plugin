@@ -25,7 +25,7 @@ public class ExecutableDownloaderTest {
         File cliFile = new File(cliPath.toString());
 
         FileDownloader mockDownloader = (URL url, File target) -> {
-            if (url.toString().equals("https://static.snyk.io/cli/stable/snyk-macos.sha256")) {
+            if (url.toString().equals("https://static.snyk.io/cli/stable/snyk-macos.sha256?utm_source=MAVEN_PLUGIN")) {
                 Files.write(target.toPath(), incorrectShasum);
             } else {
                 Files.write(target.toPath(), helloWorldBytes);
@@ -39,7 +39,7 @@ public class ExecutableDownloaderTest {
             mockDownloader
         ));
 
-        assertEquals(e.getMessage(), "computed sha256 checksum for CLI download does not expected");
+        assertEquals("computed sha256 checksum for CLI download does not expected", e.getMessage());
     }
 
     @Test
