@@ -1,5 +1,6 @@
 package io.snyk.snyk_maven_plugin.download;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.BufferedReader;
@@ -10,14 +11,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.snyk.snyk_maven_plugin.download.UpdatePolicy.shouldUpdate;
 
 public class ExecutableDownloader {
-
-    private static final String SNYK_CLI_DOWNLOAD_FORMAT = "https://static.snyk.io/cli/%s/%s";
+    public static final String SNYK_INTEGRATION_NAME = "MAVEN_PLUGIN";
+    private static final String SNYK_CLI_DOWNLOAD_PRIMARY = "https://downloads.snyk.io/cli/%s/%s";
+    private static final String SNYK_CLI_DOWNLOAD_SECONDARY = "https://static.snyk.io/cli/%s/%s";
+    private static final List<String> SNYK_CLI_DOWNLOAD_URLS = Arrays.asList(SNYK_CLI_DOWNLOAD_PRIMARY, SNYK_CLI_DOWNLOAD_SECONDARY);
 
     /**
      * Ensure that the CLI is downloaded and that it matches the corresponding `.sha256` file.
@@ -51,9 +56,10 @@ public class ExecutableDownloader {
             checksumFile.delete();
             cliFile.getParentFile().mkdirs();
 
-            downloader.download(cliDownloadURL, cliFile);
+            URL cliUrlWithUtm = new URL(cliDownloadURL.toString() + "?utm_source=" + SNYK_INTEGRATION_NAME);
+            downloader.download(cliUrlWithUtm, cliFile);
 
-            URL checksumUrl = new URL(cliDownloadURL.toString() + ".sha256");
+            URL checksumUrl = new URL(cliDownloadURL.toString() + ".sha256" + "?utm_source=" + SNYK_INTEGRATION_NAME);
             downloader.download(checksumUrl, checksumFile);
 
             if (!verifyChecksum(cliFile, checksumFile)) {
@@ -67,6 +73,33 @@ public class ExecutableDownloader {
         }
     }
 
+    /**
+     * Iterate a list of download URLs and ensures the CLI is downloaded and that it matches the corresponding `.sha256` file.
+     * Check that the CLI exists, that the sha 256 file exists, that they match, and that we don't need to do an update (per the update policy).
+     * If any of those conditions are not true, then we delete both the CLI file and the sha256 file and (re-)download them.
+     * If a download URL fails, try the next URL in the list
+     *
+     * @param cliDownloadURLs the list of URLs to try and download the CLI from.
+     * @param cliFile         the File representing where the CLI should either be downloaded to, or the location in which it should be verified.
+     * @param updatePolicy    describes how/when to do CLI version updates.
+     * @param downloader      the FileDownloader instance to be used for downloading.
+     * @return
+     */
+    public static File iterateAndEnsure(List<URL> cliDownloadURLs, File cliFile, String updatePolicy, FileDownloader downloader) {
+        for (URL cliDownloadURL : cliDownloadURLs) {
+            try {
+                File downloadedFile = ensure(cliDownloadURL, cliFile, updatePolicy, downloader);
+
+                if (downloadedFile.exists()) {
+                    return downloadedFile;
+                }
+            } catch (RuntimeException e) {
+                System.err.println("Failed to download from '" + cliDownloadURL + "': " + e);
+            }
+        }
+        throw new RuntimeException("Failed to download from URLs");
+    }
+
     static String downloadToString(URL url) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
         String all = br.lines().collect(Collectors.joining("\n"));
@@ -74,17 +107,27 @@ public class ExecutableDownloader {
     }
 
     public static String getLatestVersion() throws IOException {
-        String version = "v" + downloadToString(new URL("https://static.snyk.io/cli/latest/version")).trim();
+        String version = "v" + downloadToString(new URL("https://downloads.snyk.io/cli/stable/version")).trim();
         return version;
     }
 
-    public static URL getDownloadUrl(Platform platform, String version) {
+    public static List<URL> getDownloadUrls(Platform platform, String version) {
+        List<URL> downloadUrls = new ArrayList<>();
+        
+        for (String url : SNYK_CLI_DOWNLOAD_URLS) {
+            downloadUrls.add(getDownloadUrl(url, platform, version));
+        }
+        
+        return downloadUrls;
+    }
+
+    public static URL getDownloadUrl(String url, Platform platform, String version) {
         try {
-            if (version.equals("latest")) {
+            if (version.equals("stable")) {
                 String actualLatestVersion = getLatestVersion();
-                return new URL(String.format(SNYK_CLI_DOWNLOAD_FORMAT, actualLatestVersion, platform.snykExecutableFileName));
+                return new URL(String.format(url, actualLatestVersion, platform.snykExecutableFileName));
             }
-            return new URL(String.format(SNYK_CLI_DOWNLOAD_FORMAT, version, platform.snykExecutableFileName));
+            return new URL(String.format(url, version, platform.snykExecutableFileName));
         } catch (MalformedURLException e) {
             throw new RuntimeException("Download URL is malformed", e);
         } catch (IOException e) {

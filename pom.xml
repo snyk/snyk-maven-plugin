@@ -222,6 +222,7 @@
           </pomIncludes>
           <pomExcludes>
             <pomExclude>${env.POM_EXCLUDE_PATTERN}</pomExclude>
+            <pomExclude>${env.POM_EXCLUDE_CODE_TEST}</pomExclude>
           </pomExcludes>
           <preBuildHookScript>setup</preBuildHookScript>
           <postBuildHookScript>verify</postBuildHookScript>

@@ -79,7 +79,7 @@ public abstract class SnykMojo extends ComposedMojo {
         return Optional.ofNullable(cli)
             .map(cli -> cli.version)
             .map(CLIVersions::sanitize)
-            .orElse(CLIVersions.LATEST_VERSION_KEYWORD);
+            .orElse(CLIVersions.STABLE_VERSION_KEYWORD);
     }
 
     public boolean shouldSkip() {
@@ -102,12 +102,12 @@ public abstract class SnykMojo extends ComposedMojo {
         });
     }
 
-    public URL getDownloadUrl() {
-        return ExecutableDownloader.getDownloadUrl(platform, getDownloadVersion());
+    public List<URL> getDownloadUrls() {
+        return ExecutableDownloader.getDownloadUrls(platform, getDownloadVersion());
     }
 
     public String getUpdatePolicy() {
-        if (!getDownloadVersion().equals(CLIVersions.LATEST_VERSION_KEYWORD)) {
+        if (!getDownloadVersion().equals(CLIVersions.STABLE_VERSION_KEYWORD)) {
             return UpdatePolicy.ALWAYS;
         }
         return Optional.ofNullable(cli)
