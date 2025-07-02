@@ -11,9 +11,9 @@ metadata:
   links:
     - icon: message
       title: "Team Asks Channel"
-      url: "https://snyk.slack.com/channels/ask-team-hammer"
+      url: "https://snyk.slack.com/channels/ask-team-cli"
   name: snyk-maven-plugin
 spec:
   lifecycle: unknown
-  type: service
-  owner: hammer
+  type: supply-chain-tooling
+  owner: cli

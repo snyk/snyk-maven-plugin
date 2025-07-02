@@ -8,7 +8,7 @@ jobs:
       fail-fast: false  # we care about other platforms and channels building
       matrix:
         os: [ ubuntu, macos, windows ]
-        maven_version: [ 3.2.5, 3.6.3 ]
+        maven_version: [ 3.8.9, 3.9.10 ]
     runs-on: ${{ matrix.os }}-latest
 
     steps:
