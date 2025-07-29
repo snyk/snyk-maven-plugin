@@ -172,6 +172,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
@@ -193,6 +194,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -201,6 +203,7 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -324,6 +327,7 @@
       </build>
     </profile>
   </profiles>
+
   <distributionManagement>
     <repository>
       <id>ossrh</id>
