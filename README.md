@@ -236,6 +236,14 @@ them in line with the CLI usage. For example:
 
 For a list of supported arguments, see [Configuration](#args-arraystring).
 
----
+## Contributing
 
-Made with 💜 by Snyk
+To ensure the long-term stability and quality of this project, we are moving to a closed-contribution model effective August 2025. This change allows our core team to focus on a centralized development roadmap and rigorous quality assurance, which is essential for a component with such extensive usage.
+
+All of our development will remain public for transparency. We thank the community for its support and valuable contributions.
+
+## Getting Support
+
+GitHub issues have been disabled on this repository as part of our move to a closed-contribution model. The Snyk support team does not actively monitor GitHub issues on any Snyk development project.
+
+For help with Snyk products, please use the [Snyk support page](https://support.snyk.io/), which is the fastest way to get assistance.
